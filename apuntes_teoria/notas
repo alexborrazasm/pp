@@ -1,0 +1,742 @@
+compilado con ocamlc este se ejecuta en una vm pero si compilamos con ocamlopt si que se puede ejecutar en nativo
+
+como compilar:
+ocamlc nombre.ml -o nombre_ejecutable
+ocamlopt nombre.ml -o nombre_ejecutable
+
+otro compilador:
+se llama compilador interactivo o bucle de escritura/lectura
+
+ocaml	COMPILADOR INTERACTIVO
+
+# se lee sharp
+que es un Pront? es un incitador, no está pidiendo que hagamos algo.
+El Pront de este compilador es el sharp (#)
+
+Aqui escribimos el código lo compila y inmediatamente lo ejecuta. Y Además nos va a dar información de lo que ocurrio.
+Es muy útil para aprender.
+
+Con ;; le indicamos al compilador que terminamos de escribir el código.
+
+Este compilador nos cuenta lo que pasa, aunque no haya prints.
+
+Ocaml es muy esctricto con los tipos de valores. El compilador para poder compilar tiene que ser capaz de averiguar que tipo de la expresión.
+ejemplo float (número de coma flotante) o int (número entero)
+Esto pasa duracte la fase de compilación. Tipado estático.
+En otros lenguajes puede ser dinámico (se decide durante la ejecución)
+
+
+Operaciones Ocaml:	//Ocaml tiene signos diferentes para los tipos que sumes, para no sobrecargarlos
+Suma int +
+Suma float +.
+
+Producto int *
+Producto float *.
+
+En Ocalm no hay conversiones automáticas de tipos, a diferecnia de otros lenguajes como C.
+
+Ej:
+
+# 2 + 1.0;;
+Error: This expression has type float but an expression was expected of type
+         int
+
+Por sumar dos int y poner un float.
+
+Se podría transformar un int en float con la función predefinida llamada por float_of_int numero_entero.
+Ejemplo:
+
+# float_of_int 2 +. 1.0;;
+- : float = 3.
+
+
+la función float_of_ints se puede llamar también con float número.
+
+Para saber el valor max y min de mi máquina se puede saber con max_int y min_int respectivamente.
+Esto es importante por que se puede liar.
+
+String: otro tipo de dato es las cadenas de caracteres.
+para concatenar string tenemos el operador ^ que concadena.
+ej:
+# "Hola" ^ " y adiós";;
+- : string = "Hola y adiós"
+
+El error de sintaxis en Ocaml:
+
+# 2 +;;
+Error: Syntax error
+
+HAY UN MANUAL DE OCAML
+
+El compilador "interactivo", en el manual de OCAML se llama toplevel system o REPL.
+
+EN el Ocaml, compilador interactivo, se puede poner lenjuage ocaml o ordenes para el compilador.
+para introducir comandos para el #, sharp
+
+en Unix con control+z se suspende
+con control+d se cierra
+
+con jobs puedo ver los procesos abiertos en la terminal.
+con fg %numerodejobs puedo volver.
+
+Como no permite editar, se puede abrir el Ocaml con ledit ocaml o rlwrap ocaml, para poder ver comandos anteriores etc.
+
+Los tabuladores no son buenos dado que según el editor pueden varias, es mejor configurar el tabulador para que escriba 4 espacios por ejemplo, asi da igual donde lo abras.
+
+Tema caracteres '' y "":
+
+# "\t";;
+- : string = "\t"
+# 'A';;
+- : char = 'A'
+# 'AB';;
+Error: Syntax error
+# "AB";;
+- : string = "AB"
+
+'' para hacer un char 1 caracter y "" para string 
+
+Expresiones tipo bool:
+
+# true;;
+- : bool = true
+# false;;
+- : bool = false
+
+Como se hacen el Ocaml la aplicacion de una operación a un argumento:
+
+ej con asin (arcoseno)
+
+# 2. *. asin 1.0;;
+- : float = 3.14159265358979312
+
+asin es un valor float -> float , de float a float (una funcion que toma un valor float y devuelve otro valor float)
+
+es como las funciones para convertir los tipos de datos, char_of_int, que es del tipo  int -> char, tipo int a char
+
+ERROR DE EJECUCIÓN:
+
+# char_of_int 300;;
+Exception: Invalid_argument "char_of_int".
+
+300 no está en la tabla ASCII (256 char)
+
+en Ocaml hay tipos infinitos.
+
+la operación de funciones tiene prioridad
+asin 1.0 /. 2.0 = (asin 1.0) /. 2.0
+
+NO ESCRIBIR PARENTESIS QUE NO SIRVAN PARA NADA
+
+char_of_int es un nombre de un tipo de valor, int to char
+
+print_endline;; es un nombre de tipo string to unit, esta si que es una función
+lo que importa de esta función no es valor, es que cuando se aplica la función a un string tiene un efecto coolateral que es mandar un string a la salida estandar
+
+solo hay un valor de tipo unit:
+unit = ()
+
+COMO ESCRIBIR FUNCIONES QUE NO ESTEAN PREDEFINIDAS EN OCAML; EJEMPLO imprementar la función not:
+
+function true -> false | false -> true;;
+
+function es una palabra reservada
+dos reglas separadas por una |
+izq -> der      expresiones lamda se llama a estas funciones
+
+la programación funcional se basa en lamda-cálculo
+a diferencia de la imperactiva que se basa en la máquina de Turing
+
+COMO LA APLICAMOS?
+
+(function true -> false | false -> true) (1 < 2);;
+
+# (function true -> false | false -> true) (1 < 2);;
+- : bool = false
+
+Como se evalua? primero de evalua (1 < 2), que es true y luego se miran las reglas de la función lamda, la que coincida, en este caso true -> false, y nos devuelve false.
+
+En ocaml, no se le llama variable a los nombres de las cosas.
+
+function x -> 2 * x;; aqui la x representa el valor de un posible argumento que le entre a la funcion
+esta es una función de int -> int
+
+como se evalua?   (function x -> 2 * x) (2 + 3) + 1;
+		  (function x -> 2 * x) 5 + 1;
+		  10 + 1;
+		  ; int 11
+
+si tenemos varias reglas, el orden importa, cuando varias hacen math se utiliza la primera
+
+DEFINICIÓN ocaml: asocia un nombre con un valor:
+comienza con let:
+let nombre = cualquier_expresión_valida_en_ocaml
+ej:
+let pi = 2. *. asin 1.;;
+
+Se puede redefinir? Si, y cuando lo haces guarda la más reciente.
+
+Puedes reescribir la función not como  = int 3 xd.
+
+Se pueden cambiar el nombre de las cosas como let arcsen = asin;;
+
+LAS FUNCIONES SON VALORES, REPASAR PRÁCTICA
+
+Char.code;; que pasa? no deberia empezar por minúscula?
+
+El nombre ahí es code, y el Char es un módulo, dentro de ese módulo hay un definición para el módulo code.
+
+Librerias:
+
+Core --- Stdlib
+Standar --- Char
+	--- String
+	--- etc.
+
+No siempre tengo que especificar el módulo, por que las que estan en Stdlib el compoilador me los pilla automaticamente.
+
+Ocaml libera memoria automaticamente, a diferecnia de C.
+
+se puedes hacer DEFINICIONES POR UN MOMENTO:
+
+let pi = 2 + 1 in pi * pi;;
+
+#despues de 3 días sin pasarme por teoría, seguimos
+
+un ejemplo que vieron la última clase:
+
+let s = function n -> function i -> n + i;;
+
+se puede aplicar una anrebiatura, pasar la regla a la izq
+
+let s x = function y -> x + y;;
+
+let s x y = x + y;;
+
+ejemplo de ejecución:
+
+# let s x y = x + y;;
+val s : int -> int -> int = <fun>
+# s 2 3;;
+- : int = 5
+
+exponenciación:
+
+( ** );;
+- : float -> float -> float = <fun>
+
+con == no se comparan valores, hace otra cosa, ojo que aveces parece que si compara
+
+la negación de valores en ocaml se hace con (<>);;
+
+(||);; es la disyunción lógica
+
+(&&);; conjunción lógica 
+se puede manejar como una función, pero no se comparta como una función el ocaml
+
+# (&&) false (1 / 0 > 0);;
+- : bool = false
+
+debería dar error al dividir entre 0, por que en Ocaml en las funciones primero de evalua el argumneto, por ser ocaml un lenguaje "eagle".
+
+sin embargo con otro operador: 
+
+# ( * ) 0 (1/0);;
+Exception: Division_by_zero.
+
+que pasa con (&&), b1 && b2, se evalua b1 y si es true se evalua b2, pero si b1 es false ya no se evalua b2;;
+es una manera de hacer una conjunción con atajo.
+Es una manera diferente de evaluar las funciones en ocaml.
+Con (||) pasa algo parecido, pero con true.
+
+(&&) no es como una funciones es como un:
+
+if <b1> then <b2> else false;;
+
+estamos enganchados al if-then-else, pero es más natural && y ||
+
+if <algo> then true else false; es lo mismo que escribir la expresión booleana, al profesor le explita la cabeza
+
+para negar un bool usar not
+
+not es una función de bool -> bool
+
+definiciones y expresiones OCAML
+
+A otra cosa;
+let f (x,y) = 2 * x + y;;
+o sin abreviar:
+let f = function (x,y) -> 2 * x + y;;
+que es? que dice el compilador?
+
+# let f = function (x,y) -> 2 * x + y;;
+val f : int * int -> int = <fun>
+
+dice, ( int * int ) -> int, función que va del tipo int * int a int
+que es int * int? un par. El producto cartesiano.
+
+# 2,3;;
+- : int * int = (2, 3)
+
+el producto cartesiano en Ocaml está definido default
+
+# 2 + 1, true;;
+- : int * bool = (3, true)
+
+se pude hacer int * bool, sachada
+
+let s' (x,y) = x + y;;
+val s' : int * int -> int = <fun>
+
+# s' (2,3);;
+- : int = 5
+
+ESTAN LOS PRODUCTOS CARTESIANOS DE TODOS LOS TIPOS
+
+función fst
+
+# fst;;
+- : 'a * 'b -> 'a = <fun>
+
+al aplicarla a un par, nos devuelve la primera componente
+# fst ("hola", 2);;
+- : string = "hola"
+
+funcion snd
+
+# snd;;
+- : 'a * 'b -> 'b = <fun>
+
+al aplicarla a un par nos devuelve la segunda componente
+# snd ("hola", 2);;
+- : int = 2
+
+como definimos por ejemplo fst?
+
+let fst (x,y) -> x;;
+
+tambien se puede escribir:
+
+let fst (x,_) = x;;
+
+Donde puede ir un nombre puede ir un _ si no nos hace falta para calcular.
+
+# fst;; (* Devuelve el primero de los pares *)
+- : 'a * 'b -> 'a = <fun>
+
+# snd;; (* Devuelve el segundo de los pares *)
+- : 'a * 'b -> 'b = <fun>
+
+fst y snd solo se puedes aplicar a pares
+
+# true, 0 , "trio";;
+- : bool * int * string = (true, 0, "trio")
+
+# (true, 0) , "trio";;
+- : (bool * int) * string = ((true, 0), "trio")
+
+Se puede definir asi en ocaml:
+# let p = (true, 0),"falso trio";;
+val p : (bool * int) * string = ((true, 0), "falso trio")
+
+let x, y = p;; y que pasa?
+
+# let x, y = p;;
+val x : bool * int = (true, 0)
+val y : string = "falso trio"
+
+Estamos extrayendo las componentes, por eso las funciones fst y snd son poco utilizadas.
+
+# let _,b = p;;
+val b : string = "falso trio"
+
+# let a,_ = p;;
+val a : bool * int = (true, 0)
+
+pueden surgir problemas, como:
+
+# let x,y = 1,2,3;;
+Error: This expression has type 'a * 'b * 'c
+       but an expression was expected of type 'd * 'e
+
+No compila, da error de tipo. 
+Para que compile tiene que tener tipos compatibles, no solo lo necesario hasta ahora.
+
+Ejemplo extremo:
+# let 0 = 1 - 1;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+1
+
+Nos dice, como esto no valga 0 y valga por ejemplo 1 va a fallar, aunque compile, en este caso no tendría problema.
+Ahora si no es igual a 0:
+
+# let 0 = 1 + 1;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+1
+Exception: Match_failure ("//toplevel//", 1, 4).
+
+Para implementar operaciones que devuelven varios resultados necesitamos el producto cartesiano.
+
+# let sp n m = n + m, n * m;;
+val sp : int -> int -> int * int = <fun>
+
+recordar que esto es una abrebiatura de definiar una función.
+
+Abrebiado:
+
+# let per_area r =
+      let pi = 2. *. asin 1. in
+      2. *. pi *. r,
+      pi *. r *. r;;
+val per_area : float -> float * float = <fun>
+
+Sin abrebiar:
+
+# let per_area = function r ->
+      let pi = 2. *. asin 1. in
+      2. *. pi *. r,
+      pi *. r *. r;;
+val per_area : float -> float * float = <fun>
+
+puedo definir pi antes para que no se evalue 2 veces:
+
+let per_area =
+    let pi = 2. *. asin 1. in
+    function r ->
+       2. *. pi *. r,
+       pi *. r *. r;;
+
+Ahora pi solo se calcula una vez, a diferencia de las otras ateriores.
+
+Otro día, nos pone el ejemplo
+
+(* El cociente de la división antera *)
+let rec quo x y = (* Solo tiene sentido si: x >= 0, y > 0 *)
+    if x < y then 0
+    else 1 + quo (x - y) y;;
+
+Aqui va creciendo, es se llama recursividad no terminal, no tail recursion
+
+Otra:
+(El resto de la división entera)
+let rec rem x y = (* Solo tiene sentido si: x >= 0, y > 0 *)
+    if x < y then x
+    else rem (x - y) y;;
+
+Aqui no crece, esto se llama reculsividad final o terminal, tail recursion
+
+esta última recursividad es mucho más eficiente. No existe espacio infinito para guardas la reculsividad, normalmente el espacio lo gestiona el sistema operativo o la máquina virtual
+de Ocaml, se llama pila de reculsividad, ERROR  de stack overflow.
+
+Una expresión reculsiva terminal nunca va a agotar la pila de reculsividad.
+
+Debería ser muy fácil determinal si es terminal o no, si lo estamos entendiendo.
+
+(* Ahora la división con cociente y resto *)
+let div x y = quo x y, rem x y;;
+
+Vamos a definir div, pero sin hacer "2 veces el reparto"
+
+let rec div x y =
+    if x < y  then (0,x) (* Paso no reculsivo *)
+    else 1 + fst (div (x-y) y), snd (div (x-y) y);;
+
+Pareque si que, pero no hemos reduccido el número de pasos al contrario 2^n pasos. Tarda muchísimo.
+El error calcular lo mismo 2 veces, lo que desde el punto de vista computacional no tiene sentido.
+
+let rec div x y =
+    if x < y  then (0,x) (* Paso no reculsivo *)
+    else let qr = div (x - y) y in
+         1 + fst qr, snd qr;;
+
+Ahora sí, solo lo llamamos 1 vez y no aumentamos la complejidad.
+Y además ahora si que doy la mitad de pasos.
+El profesor si haces el uso de fst y snd nos llama novatos y no queda elegante, como hacerlo elegante:
+
+let rec div x y =
+    if x < y  then (0,x) (* Paso no reculsivo *)
+    else let (q,r) = div (x - y) y in
+         1 + q, r;;
+
+
+Otro día 20 de Oct:
+
+(* Sucesión de Fibonacci *)
+let rec fib n = (* n >= 0 *)
+    if n <= 1 then n
+    else fib (n - 1) + fib (n - 2);;
+
+int -> int
+es poco eficiente, para probar fic 70 son 2^70 operaciones
+el tiempo es 2T(68) < T(70) < 2T(69)
+
+como optimizar está función?
+Podría hacer una función que para cada fic me devuelve los 2 últimos fic en lugar de solo 1
+
+(* Sucesión de Fibonacci *)
+let rec fib2 = function
+    1 -> (1, 0)
+  | n -> let f1, f2 = fib2 (n - 1) in
+         (f1 + f2, f1);;
+como hago para que no devuelva los 2:
+let fib x = fst (fib2 x);;
+
+es reculsiva terminal fic2? no dado que la recursividad no es la última operación, pero no me preocupa el stack overflow dado que a partir de 90 ya nos pasamos de max_int.
+
+Como usar el Ocaml para calcular tiempos:
+
+Sys.time tipo unit -> float (que raro de init -> float, no es funcional no es una función es una pseudofunción, es imperactivo)
+
+# Sys.time;;
+- : unit -> float = <fun>
+# Sys.time ();;
+- : float = 0.060357999999999995
+
+Se supono que devuelve lo que el sistema operativo dice que lleva consumido este proceso de cpu en segundos.
+Entonces si quiero saber cuando tarde algo, puedo pedir Sys.time () y luego volver a pedirlo y restar.
+
+Como automatizar esto:
+
+let crono f x =
+    let t = Sys.time () in
+    let _ = f x in
+    Sys.time () -. t;;
+
+val crono : ('a -> 'b) -> 'a -> float = <fun>
+
+
+Otro día:
+
+stack overflow pasa si lleva deja operaciones sin completar.
+Puedo hacer una reculsividad infinita y que no de stack overflow, con una reculsividad terminal.
+
+En ocaml se puede poner _ entro números para marcal el . y leer más facil, ej: 1_000_000 un millon.
+
+arreglar en arreglar fib2 y en 0 de 0:
+
+let rec fib2 = function
+    0 -> (0, 1) (* No es una solución elegante, (0,1) 1 sería el fib de -1 si -1 tubiera fib *)
+  | n -> let f1, f2 = fib2 (n - 1) in
+         (f1 + f2, f1);;
+
+Como hacer fic reculsivo terminal: pues como si lo hiciera con un bucle, los buckes se traducen en funciones reculsivas terminales
+
+let fib' n =
+    let rec aux (i, f, a) =
+        if i = n then f
+        else aux (i + 1, f + a, f)
+    in aux (0, 0, 1);;
+
+AHORA ES TERMINAL y ya no tenemos stak overflow
+
+Podemos hacer una función que repita otra para medir tiempos
+No lo deja como ejercicio, sería int -> ('a -> 'b) -> 'a -> unit
+chrono (rep 1000 fib') 260_000
+
+
+
+CAMBIAMOS DE TEMA, TIPOS DE DATOS
+
+para cada tipo t, tenemos tambien t list
+
+int list
+string list
+bool list
+
+# [1; 2; 3];;
+- : int list = [1; 2; 3]
+
+# ['a'];;
+- : char list = ['a']
+
+que es un t list?
+es una secuencias o listas finitas de valores de tipo t.
+
+# ['t', 1];;
+- : (char * int) list = [('t', 1)]
+
+Como descompongo un t list para trabajar con las componentes?
+
+funciones predefinidas para trabajar por ellas:
+# List.hd;;
+- : 'a list -> 'a = <fun>
+
+devuelve la cabeza de la lista, el primer elemento
+
+# List.tl;;
+- : 'a list -> 'a list = <fun>
+
+devuelve una lista igual a la que le pasamos pero quita la cabeza de la original.
+
+Con estñas 2 funciones pudes hacer lo que queira con una lista.
+
+No son como las listas en c, el tipado de ocaml es fijo, los valores son inmutables, no puedes "insertar" valores en listas.
+
+# let l = [2,5];;
+val l : (int * int) list = [(2, 5)]
+
+Operadores de las listas:
+@
+
+# l @ l;;
+- : (int * int) list = [(2, 5); (2, 5)]
+
+vamos a empezar por una más fácil.
+
+Defina lenghth: 'a list -> int
+
+# [];;
+- : 'a list = []  (* Un valor polimórfico que no es una función *)
+
+let rec length l = 
+    if l =[] then 0
+    else 1 + length (List.tl l);;
+
+let rec last l =
+    if List.tl =[] then List.hd l
+    else last (list.tl l);;
+
+
+
+Falte el otro día,
+siguiente día:
+
+nos habla que el otro día dieron frases math with, ej esta función:
+
+let rec compare_lengths l1 l2 =
+    let p = l1, l2 in
+    (function
+          [], [] -> 0
+        | [], _  -> -1
+        |  _, [] -> 1
+        | _::t1, _::t2 -> compare_legths t1 t2) p;;
+
+
+lo mimos que el de arriba:
+
+let rec compare_lengths l1 l2 =
+    (function
+          [], [] -> 0
+        | [], _  -> -1
+        |  _, [] -> 1
+        | _::t1, _::t2 -> compare_legths t1 t2) (l1, l2);;
+
+operador @
+# (@);;
+- : 'a list -> 'a list -> 'a list = <fun>
+
+List.append
+# List.append;;
+- : 'a list -> 'a list -> 'a list = <fun>
+
+# List.append [1; 2; 3] [4; 5];;
+- : int list = [1; 2; 3; 4; 5]
+
+Una lista o es lista vacia o tiene una cabeza y una cola. Las listas tienen naturaleza reculsiva.
+vamos a definir nosotros append:
+
+let rec append l1 l2 = match l1 with 
+        [] -> l2                      (* Si l1 es vacia *)
+      | h::t -> h :: append t l2      (* Si no es vacia *)
+
+No es rec terminal, está así definita en el modulo List en o Ocaml.
+
+# List.rev_append [1; 2; 3] [4; 5];;
+- : int list = [3; 2; 1; 4; 5]
+
+vamos a definirla:
+let rec rev_append l1 l2 = match l1 with
+        [] -> l2
+      | h::t -> rev_append t (h::l2);;
+
+Esta su es reculsiva terminal, es más natural el revappend que el append por como está construidas las listas en Ocaml
+
+A partir de rev_append puedo definiar append recursivo terminal
+
+# List.rev;;
+- : 'a list -> 'a list = <fun>
+
+es un caso particular de rev_append:
+
+let rev l = rev_append l [];;
+
+como hacer el append terminal:
+
+let append' l1 l2 = rev_append (rev l1) l2;;
+
+A partir de la versión 5 de Ocaml la append es terminal, en las anterior no lo era por lo lentas que eran las máquinas en su momento.
+
+La no terminalidad de append tiene una particularidad, lo que deja pendiente es el contructor, son terminales salvo por el contructor
+es constructor no es una "operación" como tal, si al compilador se lo pides puede compilar función así como terminal.
+que es lo que han hecho en la versión 5 de ocaml. Como curiosidad.
+
+
+A otra cosa, un tema recurrente, los errores de ejecución:
+# 5 / 0;;
+Exception: Division_by_zero.
+
+esto en un programa nos pararia la ejecución del programa
+
+# List.hd [];;
+Exception: Failure "hd".
+No puede devolver la cabeza de una lista vacia.
+
+# List.tl [];;
+Exception: Failure "tl".
+
+# List.nth;;
+- : 'a list -> int -> 'a = <fun>
+nos devuelve el elemento que le pidamos de la lista
+que pasa si aplicamos nth a un elemento que no exista
+
+# List.nth [1; 2] 3;;
+Exception: Failure "nth".
+
+Y si accedemos a un elemento de una lista que no tiene sentido para ninguna
+# List.nth [1; 2] (-1);;
+Exception: Invalid_argument "List.nth".
+
+Otros tipos de datos:
+# Division_by_zero;;
+- : exn = Division_by_zero
+
+# Failure;;
+Error: The constructor Failure expects 1 argument(s),
+       but is applied here to 0 argument(s)
+
+como constructor?
+
+# Failure "menudo error!";;
+- : exn = Failure "menudo error!"
+
+el otro día definio está función:
+
+let hd = function h::_ -> h;;
+
+# let hd = function h::_ -> h;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+val hd : 'a list -> 'a = <fun>
+
+Dejamos la lista vacia, que no tiene sentido, sin definir
+
+# hd [];;
+Exception: Match_failure ("//toplevel//", 1, 9).
+
+entonces le puedes decir que el valor exn sea el adecuado con:
+# raise;;
+- : exn -> 'a = <fun>
+Nunca devuelve nada, por eso devuelve del tipo que quiera
+
+# raise Division_by_zero;;
+Exception: Division_by_zero.
+
+No devuleve si no que da el error.
+
+
+let hd = function 
+    [] -> raise (Failure "hd")      
+   | h::_ -> h;;
