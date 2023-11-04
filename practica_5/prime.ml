@@ -1,31 +1,16 @@
-(*  let is_prime n =
-      let rec check_from i =
-        i >= n ||
-        (n mod i <> 0 && check_from (i+1))
-        in check_from 2;; 
-*)
+let is_prime n =
+  let rec check_from i =
+    i >= n ||
+    (n mod i <> 0 && check_from (i+1))
+  in check_from 2;; 
 
 let rec next_prime n =
-    let is_prime n =
-        let rec check_from i =
-          i >= n ||
-          (n mod i <> 0 && check_from (i+1))
-          in check_from 2
-        in
-    if (is_prime (n + 1) = true)
-        then n + 1
-    else next_prime (n + 1);;
+  if (is_prime (n + 1) = true) then n + 1
+  else next_prime (n + 1);;
 
 let rec last_prime_to n = 
-    let is_prime n =
-        let rec check_from i =
-          i >= n ||
-          (n mod i <> 0 && check_from (i+1))
-          in check_from 2
-        in
-    if (is_prime n = true)
-        then n
-    else next_prime (n - 1);;
+    if (is_prime n = true) then n
+    else last_prime_to (n - 1);;
 
 let is_prime2 n =
     let rec check_from i =

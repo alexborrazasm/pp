@@ -8,7 +8,7 @@ let crono f x = (* Función automatizada para medir el tiempo de una función *)
 
 val crono : ('a -> 'b) -> 'a -> float = <fun>
 
-let crono f x y = (* Función automatizada para medir el tiempo de una función que tome 2 argumentos *)
+let crono2 f x y = (* Función automatizada para medir el tiempo de una función que tome 2 argumentos *)
     let t = Sys.time () in
     let _ = f x y in
     Sys.time () -. t;;
