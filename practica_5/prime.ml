@@ -16,7 +16,7 @@ let rec next_prime n =
         then n + 1
     else next_prime (n + 1);;
 
-let rec last_prime n = 
+let rec last_prime_to n = 
     let is_prime n =
         let rec check_from i =
           i >= n ||

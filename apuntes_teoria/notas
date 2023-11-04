@@ -740,3 +740,73 @@ No devuleve si no que da el error.
 let hd = function 
     [] -> raise (Failure "hd")      
    | h::_ -> h;;
+
+
+Otro día:
+
+se pone a programar en Ocaml de chill:
+
+let rec lmax1 = function
+    [] -> raise (Failure "lmax1")
+  | h::[] -> h
+  | h::t -> if h >= lmax1 t then h
+            else lmax1 t;;
+
+#No es admisoble hacer el mismo cálculo 2 veces, eso de arriba MAL, MUY GRAVE
+Como se evita? con una definición local
+
+let rec lmax2 = function
+    [] -> raise (Failure "lmax2")
+  | h::[] -> h
+  | h::t -> let m = lmax2 t in
+            if h >= m t then h
+            else m;;
+
+ #Las 2 son una función que devuelve el valor más alto de una lista
+No es terminal, si hago muchos pasos puedo tener stack overflow, pero si no tengo stack overflow dará un resultado y este será el máx de la lista
+lmax1 no va a dar stack overflow por que el máximo número de operaciones pendiantes es la longitud de la lista
+
+Como crear una lista, no me dió tiempo de copiar
+
+Vamos a hacerla reculsiva terminal:
+Necesito un "acumulador" ej:
+[1,2,3,4]
+1 [2,3,4]
+2 [3,4]
+3 [4]
+4
+
+let lmax' = function
+    [] -> raise (Failure "lmax2")
+  | h::t -> let rec loop m = function
+                [] -> m
+              | h::t -> loop (max m h) t
+            in loop h t;;
+
+Ahora es reculsiva terminal
+Otra versión más bonita y sencilla reculsiva terminal:
+
+let rec lmax = function
+    [] -> raise (Failure "lmax2")
+  | h::[] -> h
+  | h1::h2::t -> lmax (max h1 h2 :: t);; (* Basicamente quito de los 2 primeros elementos el que no es el maximo de los 2 *)
+
+Tiene algún inconveniente lmax sobre lmax'?
+  Si tiene que ver sobre el caso de 1 elemento, cada vez que se aplica mira si tiene un elemento la lista, en lmax' no.
+  lmax tiene que distingir 3 casos y lmax' solo 2, aunque tienen la misma complejidad si que se podría notar en el cálculo esa operación.
+
+Vamos a hablar de List.fold_left;;
+
+# List.fold_left;;
+- : ('a -> 'b -> 'a) -> 'a -> 'b list -> 'a = <fun>
+
+Tiene 3 argumentos
+Coje una operación binaria y la aplica a una lista
+
+# List.fold_left (+) 7 [2;3;4];;
+- : int = 16
+
+# List.fold_left (+) 7 [0;1];;
+- : int = 8
+
+Se puede definir length usando List.fold_left
