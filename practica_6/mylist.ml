@@ -48,8 +48,14 @@ let rec compare_lengths l1 l2 = match (l1,l2) with
     |  _, [] -> 1
     | _::t1, _::t2 -> compare_lengths t1 t2;;
  
-let compare_length_with
- 
+let rec compare_length_with list n = 
+  let rec aux l c = match (l,c) with
+      [],0 -> 0
+    | [],_ -> -1
+    | [_],0 -> 1
+    | _::t,_ -> aux t (c-1)
+  in aux list n;;
+
 let init
  
 let nth
