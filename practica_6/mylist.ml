@@ -56,24 +56,78 @@ let rec compare_length_with list n =
     | _::t,_ -> aux t (c-1)
   in aux list n;;
 
-let init
+(* No reculsiva terminal
+let init n f =
+  let rec aux m list = match (m,list) with
+      0,[] -> []
+    | 0,[_] -> list
+    | _,[] -> f (n - m)::aux (m - 1) list  
+    | _, h::t -> f (n - m)::aux (m - 1) t
+  in aux n [];;
+*)
+
+let init n f =
+  if n < 0 then raise (Invalid_argument "List.init")
+  else
+    let rec aux m list = match (m,list) with
+        0,[] -> []
+      | 0, list -> 
+        let rec rev lst =
+          let rec rev_aux acc = function
+              [] -> acc
+            | h::t -> rev_aux (h::acc) t
+          in rev_aux [] lst
+        in rev list
+      | _,[] -> aux (m - 1) [f (n - m)]
+      | _, h::t -> aux (m - 1) (f (n - m)::h::t)
+    in aux n [];;
+
+(* Primera nth que se me ocurre, complicada al absurdo
+let nth lst n =
+  let rec aux m l= 
+    if m = n then 
+      match l with
+      [] -> raise (Failure "nth")
+    | h::r -> h
+    else 
+      match l with 
+      [] -> raise (Failure "nth")
+    | h::t -> aux (m+1) t
+  in aux 0 lst;;
+*)
+
+let rec nth l n = match (n, l) with
+    _, [] -> raise (Failure "nth")
+  | 0, h::_ -> h
+  | m, _::t -> nth t (n - 1);;
  
-let nth
+let rec append l1 l2 = match l1 with
+    [] -> l2
+  | h::t -> h :: append t l2;;
+  (* not tail recursive *)
  
-let append
+ let rec rev_append l1 l2 = match l1 with
+    [] -> l2
+  | h::t -> rev_append t (h::l2);;
+ 
+let rec rev lst =
+  let rec rev_aux acc = function
+      [] -> acc
+    | h::t -> rev_aux (h::acc) t
+  in rev_aux [] lst;;
+
+let rec concat lst_lsts = match lst_lsts with
+    [] -> []
+  | []::t -> concat t
+  | (h::t)::rest -> h :: concat (t :: rest);;
+  (* not tail recursive *)
+ 
+let flatten lsi_lsts = concat lsi_lsts;;
  (* not tail recursive *)
  
- let rev_append
- 
-let rev
- 
-let concat
- (* not tail recursive *)
- 
-let flatten
- (* not tail recursive *)
- 
-let split
+let split list_pairs = function
+    [] -> ([],[])
+  | (x, y)::rest -> x :: list_pairs rest, y :: list_pairs rest;;
  (* not tail recursive *)
  
 let combine
