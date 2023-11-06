@@ -585,7 +585,7 @@ Operadores de las listas:
 
 vamos a empezar por una más fácil.
 
-Defina lenghth: 'a list -> int
+Defina length: 'a list -> int
 
 # [];;
 - : 'a list = []  (* Un valor polimórfico que no es una función *)
@@ -611,7 +611,7 @@ let rec compare_lengths l1 l2 =
           [], [] -> 0
         | [], _  -> -1
         |  _, [] -> 1
-        | _::t1, _::t2 -> compare_legths t1 t2) p;;
+        | _::t1, _::t2 -> compare_lengths t1 t2) p;;
 
 
 lo mimos que el de arriba:
@@ -621,7 +621,7 @@ let rec compare_lengths l1 l2 =
           [], [] -> 0
         | [], _  -> -1
         |  _, [] -> 1
-        | _::t1, _::t2 -> compare_legths t1 t2) (l1, l2);;
+        | _::t1, _::t2 -> compare_lengths t1 t2) (l1, l2);;
 
 operador @
 # (@);;
