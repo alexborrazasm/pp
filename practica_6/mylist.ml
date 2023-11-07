@@ -125,12 +125,17 @@ let rec concat lst_lsts = match lst_lsts with
 let flatten lsi_lsts = concat lsi_lsts;;
  (* not tail recursive *)
  
-let split list_pairs = function
-    [] -> ([],[])
-  | (x, y)::rest -> x :: list_pairs rest, y :: list_pairs rest;;
- (* not tail recursive *)
+let rec split list_pairs =  match list_pairs with
+    [] -> [], []
+  | (x, y)::rest -> 
+    let xs, ys = aux rest in 
+    x :: xs, y :: ys;;
+  (* not tail recursive *)
  
-let combine
+let combine pair_list = 
+  let aux sin acabar
+    [],[] -> []
+  | [h1.t1],[h2,t2] ->
  (* not tail recursive *)
  
 let map
