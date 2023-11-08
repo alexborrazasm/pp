@@ -810,3 +810,75 @@ Coje una operación binaria y la aplica a una lista
 - : int = 8
 
 Se puede definir length usando List.fold_left
+
+
+otro día:
+
+La importancia del folld_left, dado que se puede simplificar muchas operaciones de listas, a partir de ahora si queremos hacer algo reculsivo terminal
+podemos utilizar, si procede, el fold_left.
+
+MIRAR FOLD_LEFT
+
+HACER last con fold_left
+
+let last (h::t) =
+  List.fold_left (fun _ x -> x) h t;;
+
+Ahora vamos con algo nuevo, pero seguimos en listas:
+
+Vamos a dar algoritmos de ordenación pora listas
+
+insercción y quicksort o fusión
+
+(* Shorted: 'a list -> bool) *)
+
+# (<=) 2 4;;
+- : bool = true
+
+# 2 <= 4;;
+- : bool = true
+
+let rec shorted = function
+    [] -> true
+  | h::[] -> true
+(* Esto se puede juntar*)
+
+let rec shorted = function
+    [] | h::[] -> true
+  | h1::h2::t -> h1 <= h2 && sorted (h2::t);;  (* Si es terminal, la cunjunción y las disyunción son if camuflados *)
+
+(* El mejor caso es que no estea ordenada y el mejor que estea ordenado *)
+
+(* Ahora ordenación por insercción *)
+
+(* insert : a' -> a' list -> a' list *)
+let rec insert x = function   (* Prometo no usarla con listas no ordenadas *)
+    [] -> [x]
+  | h::t -> if x <= h then x :: h :: t
+            else h :: insert x t;;  (* No es reculsiva terminal, falta el ::, aunque este tipo de no terminalidad puede ser terminal indicandolo al compilador *)
+
+(* Un buen ejercicio es hacer la versión terminal *)
+
+(* isort: 'a list -> 'a list *)
+
+let rec isort = function
+    [] -> []
+  | h::t -> insert h (isort t);; (* No seria terminal aunque insert lo sea *)
+
+(* Segundo ejercicio, versión terminal de isort *)
+(* Caso favorable linear, medio y peor cuadrático *)
+(* Un ejercicio así interesante es pasarle listas diferentes y ver como crece *)
+(* De donde saco una lista aleatiio en camel?*)
+Random.int;; es una falsa función
+aplicado al int n, devuelve un entero menor que n y mayor igual que 0
+
+let list = List.init 100_000 (fun _ -> Random.int 400_000);;
+
+(* Si las quiero ordenar en otro orden, podría hacer que el orden sea un argumento *)
+
+(* g_shorted: 'a -> 'a -> -> bool) *)
+let rec g_shorted ord = function
+    [] | h::[] -> true
+  | h1::h2::t -> ord h1 h2 && g_sorted ord (h2::t);;
+
+(* Añadir a las otras 2 orden como argumento *)
