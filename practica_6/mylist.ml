@@ -151,9 +151,15 @@ let rec map2 f l1 l2 = match l1,l2 with
     result :: map2 f rest_X rest_y;;
  (* not tail recursive *)
  
-let rev_map
+let rev_map f list =
+  if list = [] then []
+  else 
+    let rec aux entrada salida = match entrada with
+        [] -> salida
+      | h::t -> aux t ((f h)::salida)
+    in aux list [];; 
  
-let for_all
+let rec for_all f list = 
  
 let exists
  
