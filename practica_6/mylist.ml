@@ -122,7 +122,7 @@ let rec concat lst_lsts = match lst_lsts with
   | (h::t)::rest -> h :: concat (t :: rest);;
   (* not tail recursive *)
  
-let flatten lsi_lsts = concat lsi_lsts;;
+let flatten = concat;;
  (* not tail recursive *)
  
 let rec split list_pairs =  match list_pairs with
@@ -159,17 +159,36 @@ let rev_map f list =
       | h::t -> aux t ((f h)::salida)
     in aux list [];; 
  
-let rec for_all f list = 
+let rec for_all f list = match list with
+    [] -> true
+  | h::t -> 
+    if f h = true then for_all f t
+    else false;;
  
-let exists
+let rec exists f list = match list with
+    [] -> false
+  | h::t ->
+    if f h = false then exists f t
+    else true;;
  
-let mem
+let rec mem x list = match list with
+    [] -> false
+  | h::t -> if h = x then true
+            else mem x t;;
  
-let find
+let rec find f list = match list with
+    [] -> raise (Not_found)
+  | h::t -> if f h then h
+          else  find f t;;
  
-let filter
+let filter f list = 
+  let rec aux results l = match l with
+    [] -> rev results
+  | h::t -> if f h then aux (h::results) t
+            else aux results t
+  in aux [] list;;
  
-let find_all
+let find_all = filter;;
  
 let partition
  
