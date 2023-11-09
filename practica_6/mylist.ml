@@ -128,20 +128,27 @@ let flatten lsi_lsts = concat lsi_lsts;;
 let rec split list_pairs =  match list_pairs with
     [] -> [], []
   | (x, y)::rest -> 
-    let xs, ys = aux rest in 
-    x :: xs, y :: ys;;
+    let xs, ys = split rest in 
+    x :: xs, y :: ys;;  revisar
   (* not tail recursive *)
  
-let combine pair_list = 
-  let aux sin acabar
+let rec combine l1 l2 = match l1,l2 with
     [],[] -> []
-  | [h1.t1],[h2,t2] ->
+  | [],_ | _, [] -> raise (Invalid_argument "List.combine")
+  | x::rest_x,y::rest_y -> (x,y) :: combine rest_x rest_y;;
  (* not tail recursive *)
  
-let map
+let rec map f list = match list with
+    [] -> []
+  | h::t -> let result = f h in
+    result :: map f t;;
  (* not tail recursive *)
  
-let map2
+let rec map2 f l1 l2 = match l1,l2 with
+    [],[] -> []
+  | [],_ | _,[] -> raise (Invalid_argument "List.map2")
+  | x::rest_X,y::rest_y -> let result = f x y in
+    result :: map2 f rest_X rest_y;;
  (* not tail recursive *)
  
 let rev_map
