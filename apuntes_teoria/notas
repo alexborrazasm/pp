@@ -882,3 +882,36 @@ let rec g_shorted ord = function
   | h1::h2::t -> ord h1 h2 && g_sorted ord (h2::t);;
 
 (* Añadir a las otras 2 orden como argumento *)
+
+Otro día, ordenación por fusión:
+
+(* divide 'a list -> 'a list * 'a list *)
+let rec divide = function
+    [] -> [], []
+  | [h] -> [h], []
+  | h1::h2::t -> let t1, t2 = divide t
+                 in h1::t1,h2::t2;;
+(* Nos va a divide una lista en 2 lístas lo más equilibrada posible 
+No es terminal, puede haber stack overflow 
+Ejercicio hacerlo terminal 
+Complejidad lineal, número de pasos es el n de elementos dividido entre 2 *)
+
+(* merge 'a list * 'a list -> 'a list *)
+let rec merge = function    (* Solo devuelve una lista ordenada si las listas de los pares están ordenadas *)
+    (h1::t1, h2::t2) -> if h1 <= h2 then h1 :: merge (t1, h2::t2)
+                        else h2 :: merge (h1::t1, t2)
+  | [], l | l, [] -> l;;  (* Aqui se incluye el caso [] [] *)
+(* Ejercicio versión terminal de merge *)
+
+(* a' list -> a' list *)
+let rec msort = function
+    [] -> []  | [l] -> l
+  | l -> let l1, l2 = divide l
+         in merge (msort l1 , msort l2);;
+
+(* msort no es terminal, es dificil, nunca lo va a pedir en un examen *)
+(* En nuestro universo nunca va a ocurrir que msort de stack overlow, dado que estás dividiento, para 1000 elementos llamas log2 1000 *)
+(* Queda como último ejercio incorporar el orden como elemento *)
+
+(* Si me da a' list a b' list quiere decir que no devuelve nada, igual que pasa con raise de exn -> 'a *)
+(* En el modulo list esta la función sort que ordena, también se le pasa el orden como argumento, esta hecha con este método de fusión *)
