@@ -22,10 +22,7 @@ Como se demuestra aqui empiricamente:
 *)
 
 let rec powerf x y = (* powerf 2. 10 = 1024 *)
-        if y = 0
-            then 1. 
-        else if (y mod 2) = 0
-            then powerf (x *. x) (y / 2)
-        else
-            x *. powerf (x *. x) (y / 2);; 
+        if y = 0 then 1. 
+        else if (y mod 2) = 0 then powerf (x *. x) (y / 2)
+        else x *. powerf (x *. x) (y / 2);; 
 

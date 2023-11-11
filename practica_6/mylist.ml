@@ -177,7 +177,7 @@ let rec mem x list = match list with
             else mem x t;;
  
 let rec find f list = match list with
-    [] -> raise (Not_found)
+    [] -> raise Not_found
   | h::t -> if f h then h
           else  find f t;;
  
@@ -190,16 +190,35 @@ let filter f list =
  
 let find_all = filter;;
  
-let partition
+let partition f l =
+  let rec part si no = function
+    [] -> (rev si, rev no)
+  | h::t -> if f h then part (h :: si) no t
+            else part si (h :: no) t
+  in part [] [] l;;
  
-let fold_left
+let rec fold_left f acc list = match list with
+    [] -> acc
+  | h::t -> fold_left f (f acc h) list;;
  
-let fold_right
+let rec fold_right f list acc = match list with
+    [] -> acc
+  | h::t -> f h (fold_right f t acc);;
  (* not tail recursive *)
  
-let assoc
+let rec assoc x = function
+    [] -> raise Not_found
+  | (a,b)::t -> if x = a then b
+                else assoc x t;;
+
  
-let mem_assoc
+let mem_assoc x = function
+    [] -> false
+  | (a,_)::t -> if x = a then true
+                else assoc x t;;
  
-let remove_assoc
+let rec remove_assoc x = function
+    [] -> []
+  | (a,b)::t -> if a = x then t
+                else (a,b) :: remove_assoc x t;;  
  (* not tail recursive *)

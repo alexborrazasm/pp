@@ -21,8 +21,5 @@ let rec palindromo s = (* hola -> false | eme -> true *)
     in contador 0;;
 
 let rec mcd (x,y) = (* algoritmo de Euclides *)
-    if x mod y = 0 
-        then y
-    else
-        let (x,y) = (y, x mod y) in 
-        mcd (x,y);;
+  if x mod y = 0 then y
+  else mcd (y, x mod y);;

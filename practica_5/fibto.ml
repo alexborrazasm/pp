@@ -14,6 +14,5 @@ let fib_to n =
     in imp (i + 1)
   in imp 0;;
 
-if Array.length Sys.argv <> 2 
-  then print_endline("Invalid number of arguments")
+if Array.length Sys.argv <> 2 then print_endline("Invalid number of arguments")
 else fib_to (int_of_string Sys.argv.(1));;
