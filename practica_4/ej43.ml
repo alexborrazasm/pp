@@ -9,16 +9,14 @@ let rec reverse n = (* 1234 -> 4321 *)
         if n = 0 then 1
         else 10 * exp10 (n - 1)
       in
-      (n mod 10) * exp10 (n_cifras n - 1) + reverse (n / 10)
+      (n mod 10) * exp10 (n_cifras n - 1) + reverse (n / 10);;
 
 let rec palindromo s = (* hola -> false | eme -> true *)
-    let rec contador i =
-        if i >= (String.length s - i)
-            then true
-        else if s.[i] <> s.[String.length s - i - 1]
-            then false
-        else contador (i + 1)
-    in contador 0;;
+  let rec contador i =
+    if i >= (String.length s - i) then true
+    else if s.[i] <> s.[String.length s - i - 1] then false
+    else contador (i + 1)
+  in contador 0;;
 
 let rec mcd (x,y) = (* algoritmo de Euclides *)
   if x mod y = 0 then y

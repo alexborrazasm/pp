@@ -26,7 +26,7 @@ let length'n'top n =
     else aux fn high (c + 1)
   in aux n 1 1;;
 
-  (* Nota: al usar fg y calcular solo una vez f n mejoramos los tiemoos de ejecución *)
+  (* Nota: al usar fg y calcular solo una vez f n mejoramos los tiempos de ejecución *)
 
 let longest_in m n =
   let rec aux i inter high =

@@ -21,8 +21,8 @@ let f2 x y z = x + 2 * y + 3 * z;;
    Ojo: No es una función del tipo int * int * int dado que no estamos pasando x,y,z
    val f2 : int -> int -> int -> int = <fun> *)
 
-let g x y z = x (y, z);; mirar
-(* Definimos g como una expresiín del tipo 
+let g x y z = x (y, z);;
+(* Define una funcion, g con valor ('a * 'b -> 'c) -> 'a -> 'b -> 'c
    val g : ('a * 'b -> 'c) -> 'a -> 'b -> 'c = <fun> *)
 
 g fst 1 "hola";;
@@ -34,11 +34,11 @@ g snd fst true;;
    - : bool = true *)
 
 g f 2 3;;
-(*
+(* El resultado va a dar int = 7
    - : int = 7 *)
 
 g (function (f, x) -> f (f x)) (function x -> x * x) 3;;
-(*
+(* El resultado va a dar int = 81
    - : int = 81 *)
 
 let x, y , z = 1, 2, 3;;
