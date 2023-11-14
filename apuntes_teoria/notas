@@ -915,3 +915,91 @@ let rec msort = function
 
 (* Si me da a' list a b' list quiere decir que no devuelve nada, igual que pasa con raise de exn -> 'a *)
 (* En el modulo list esta la función sort que ordena, también se le pasa el orden como argumento, esta hecha con este método de fusión *)
+
+
+
+OTRO DÍA:
+
+vamos a resolver el problema de las reinas
+
+Al igual que para cada tipo 'a hay un 'a list, también para cada tipo de datos 'a existe 'a option.
+
+Como son los valores 'a option? int option o string option etc.
+
+[] es del tipo 'a list
+
+Aqui el valor none: 'a option
+
+None es uno de los constructores de los valores de tipo option
+
+Same también
+
+como vemos en Ocaml todos los constructores van con la primera letras mayúscula.
+
+Solo tenemos 2 constructores Some y None.
+
+Es para buscar algo equivalente que de la misma información. Como en mates cuando una función no tiene imagen y le damos
+otra función para cuando entramos donde la original no tiene imagen.
+
+List.find da error si no encuntra
+
+List.fin_opt da None al fallar y un int option al estar bien
+
+let par = fun x -> x mod 2 = 0 
+
+let print_fisrt_even l =
+  print_endline (string_of_int (List.find_opt par l));;
+
+let print_first_even l =
+  match List.find_opt par l with
+      None -> print_endline "Ningún par"
+    | Sone n -> print_endline (string_of_int (List.find_opt par l));;
+
+La última no se termina el programa, en la primera al no encontrar el número veremos que se para el programa y igual no queremos.
+
+-----------------------------------------------------------------------------------------------------------------------------------
+Vamos al programa de las 8 reinas:
+
+El desafio es poner 8 reinas en un tablero de ajedrez y que no se coman las reinas.
+
+No hay una sola manera.
+
+La solución la puedo dar como una lista de pares de enteros.
+
+Primero vamos a hacerlo en un tablaro 4x4 en lugar de 8x8 la primera vez, para entender la orden
+
+En un cuadro 1x1 podemos colocar una en [1,1]
+En el 2x2 no es posible
+En el 3x3 no es posible
+En el 4x4 si, porcierto en el tablero 0x0 tambien es posible, []
+
+0x0 -> Some []
+1x1 -> Some [(1,1)]
+2x2 -> None
+3x3 -> None
+4x4 -> ?
+
+A partir de 4x4 está estudiado que a apartir del 4 tengo solución.
+
+Backtraking, es una mierda en imperactivo, aqui no, es proceso de buscar en arbol y volver hacia atrás
+
+Vamos a intentar implementarla.
+
+En primer lugar vamos a hacer una función auxiliar que mire si una reina come a otra 
+
+let come (i1,j1) (i2,j2) =
+  i1 = i2 || j1 = j2 || abs (i2-i1) = abs (j2 - j1);;
+
+let compatible p l =
+  not (List.exist (come p) l);;
+
+let qaueens n =
+  let rec completa path i j =
+    if i > n then Some path   (* Hemos terminado *)
+    else if j > n then None   (* No se puede completar *)
+    else if compatible (i,j) path
+         then completa path ((icj)::path) (i+1) 1 (* Esta frase está mal, que pasa si da none? Nos lo deja a completar *)
+         else completa path i (j+1)
+    in completa [] 1 1;; [ESTO ULTIMO PUEDE ESTAR MAL]
+
+iNTENTAR SI ME SALE RÁPIDO, HACER UNA FUNCIÓN QUE EN LUGAR DE UNA SOLUCIÓN ME DEA TODAS LAS QUE HAY
