@@ -993,13 +993,129 @@ let come (i1,j1) (i2,j2) =
 let compatible p l =
   not (List.exist (come p) l);;
 
-let qaueens n =
-  let rec completa path i j =
+let queens n =
+  let rec completar path i j =
     if i > n then Some path   (* Hemos terminado *)
     else if j > n then None   (* No se puede completar *)
     else if compatible (i,j) path
-         then completa path ((icj)::path) (i+1) 1 (* Esta frase está mal, que pasa si da none? Nos lo deja a completar *)
-         else completa path i (j+1)
-    in completa [] 1 1;; [ESTO ULTIMO PUEDE ESTAR MAL]
+         then completar path ((icj)::path) (i+1) 1 (* Esta frase está mal, que pasa si da none? Nos lo deja a completar *)
+         else completar path i (j+1)
+    in completar [] 1 1;;
 
 iNTENTAR SI ME SALE RÁPIDO, HACER UNA FUNCIÓN QUE EN LUGAR DE UNA SOLUCIÓN ME DEA TODAS LAS QUE HAY
+
+OTRO DÍA, viernes 17:
+
+Terminamos la función:
+
+let queens n =
+  let rec completar path i j =
+    if i > n then Some path   (* Hemos terminado *)
+    else if j > n then None   (* No se puede completar *)
+    else if compatible (i,j) path
+            then match completar path ((icj)::path) (i+1) 1 with
+                  None -> completar path i (j+1)
+                | Some sol -> Some sol
+         else completar oath i (j+1)
+    in completar [] 1 1;;
+
+vamos a escribirlo son None y Some, a la tradicional:
+
+let queens n =
+  let rec completar path i j =
+    if i > n then path                   (* Hemos terminado *)
+    else if j > n then raise Not_found   (* No se puede completar *)
+    else if compatible (i,j) path
+            then try completar path ((icj)::path) (i+1) 1 with      (* Try _________ with, se evalua lo que hay en la mitad, si da fallo hace lo que le digamos*)
+                     Not_found -> completar path i (j+1)
+         else completar oath i (j+1)
+    in completar [] 1 1;;
+
+
+Como es una try with en general:
+
+try <e> with 
+    <p1> -> <e1>
+  | <p2> -> <e2>
+  | ...
+
+  si e no da fallo non pasa nada, si lo da hace patern maching con lo que tiene a continuación
+
+  se interceptan los errores de e1
+
+Un par de ejemplos más del uso del try with:
+
+List.find_opt esta a diferencia de List.find nunca falla, dado que si falla devuelve none y si no same loquesea
+
+# List.find_opt;;
+- : ('a -> bool) -> 'a list -> 'a option = <fun>
+# List.find;;
+- : ('a -> bool) -> 'a list -> 'a = <fun>
+
+Como se define find_opt?
+
+es más sencillo definir find_opt usando ya el find ya definido
+
+let find_opt p l =
+  try Some (List.find p l) with
+    Not_found -> None;;
+
+val find_opt : ('a -> bool) -> 'a list -> 'a option = <fun>
+
+Si pusiera:
+
+_ -> Nose 
+
+que pasa? interceptaria todos los errores, peligro
+
+otro ejemplo, List.nth:
+
+# List.nth [1;2;3] 4;;
+Exception: Failure "nth".
+
+# List.nth [1;2;3] (-1);;
+Exception: Invalid_argument "List.nth".
+
+vamos a definir nth_opt
+
+let nth_opt l n =
+  try Some (List.nth l n) witch
+      _ -> None;;       (* Puedo interceptar todo, dado que creo que solo puede dar 2 fallos *)
+
+let nth_opt l n =
+  try Some (List.nth l n) witch
+      Failure "nth" -> None;;     (* Puede ser un problema es sting, dado que si en una versión de List.nth cambian el "nth" por otra cosa esta función deja de funcionar, dificil decisión *)
+
+Detallito de lo que va a dar la semana que viene:
+Vamos a empezar a definir tipos de datos, queeee?
+sachada
+
+Para definir un tipo de datos en Ocaml se empieza por la palabra reservada type
+
+ej:
+
+type numero = I of int | F of float;;
+
+
+Aqui tenemos que definir nosotros los contructores que pasen de int a numero y de float a numero
+
+# type numero = I of int | F of float;;
+type numero = I of int | F of float
+
+# I 4;;
+- : numero = I 4
+# F 2.4;;
+- : numero = F 2.4
+
+# [I 3; F 2.3; I 5];;
+- : numero list = [I 3; F 2.3; I 5]
+
+UNA FUNCIÓN QUE DEVUELVE EL PRIMER ENTERO
+
+let is_int = function
+    I _ -> true | _ -> false;;
+
+let rec first_int = function
+    [] -> raise Not_found
+  | I n :: _ -> n
+  | _ :: f -> first_int t;;
