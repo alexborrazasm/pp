@@ -1118,4 +1118,4 @@ let is_int = function
 let rec first_int = function
     [] -> raise Not_found
   | I n :: _ -> n
-  | _ :: f -> first_int t;;
+  | _ :: t -> first_int t;;
