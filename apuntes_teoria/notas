@@ -1119,3 +1119,152 @@ let rec first_int = function
     [] -> raise Not_found
   | I n :: _ -> n
   | _ :: t -> first_int t;;
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+otro día:
+
+type otroint = Otro of int;;
+type otroint = Otro of int
+
+# Otro 1;;
+- : otroint = Otro 1
+# Otro 6;;
+- : otroint = Otro 6
+
+
+type dobleint = R of int | L of int;;
+
+# R 5;;
+- : dobleint = R 5
+# L 5;;
+- : dobleint = L 5
+# R 10;;
+- : dobleint = R 10
+# L 10;;
+- : dobleint = L 10
+# L 10 = R 10;;
+- : bool = false
+No son iguales dado que no estás construidos con el mismo contructor
+
+Si no existieran los int option, podria hacerlo asi:
+
+type intplus = Int of int | Na;;
+Int es un constructor varaible y Na constante
+
+# Na;;
+- : intplus = Na
+# Int 4;;
+- : intplus = Int 4
+# Int 10;;
+- : intplus = Int 10
+
+Se podría usar como un int option.
+
+vamos a definir la división entera si que al dividir por 0 dera error.
+
+let div i1 i2 = match (i1,i2) with
+    (_, Int 0) -> Na
+  | (Int m, Int n) -> Int (m / n);;
+  | _ -> Na;;   (* En cualquier otro caso *)
+
+  como pasr de (/) i1 i2 a i1 / i2:
+
+  let (//) = div;;
+
+  ya está
+
+  tambien le podria llamar directamente (//) a la función div
+
+Otro ejemplo:
+
+type boolean = True | False;;
+
+podría hacer un boolean que fuera negro blanco o de 3 valores etc.
+
+let no = function
+    True -> False
+  | False -> True;;
+
+podría hacerlo como en algún lenguaje:
+
+let (!) = function
+    True -> False
+  | False -> True;;
+
+# !True;;
+- : boolean = False
+
+Otro ejemplo:
+
+type palo = Diamente | Corazon | Trebol | Pica;;
+
+let es_rojo = function
+    Corazon | Diamante -> True
+  | _ -> False;;
+
+let es_negro p = ! (esrojo p);;
+
+Otro ejemplo:
+
+type nat = One | Succ of nat;;  (* Es una definición reculsiva *)
+
+# One;;
+- : nat = One
+# Succ One;;
+- : nat = Succ One
+# Succ (Succ One);;
+- : nat = Succ (Succ One)
+
+let rec nat_of_int = function 
+    1 -> One
+  | n -> Succ (nat_of_int (n-1));;
+
+(* Si le pasamos un número negativo o 0 no stack overflow y si fuera terminal daria la vuelta a int hasta llegar a 1 *)
+(* Ejercicio, añadir un error para número no validos y hacerlo terminal *)
+
+type entero = Pos of nat | Neg of nat | Zero;;
+
+let absoluto = function
+    Neg n -> Pos n
+  | e -> e;;
+
+let opuesto = function
+    Zero -> Zero
+  | Pos n -> Neg n
+  | Neg n -> Pos n;;
+
+let entero_of_int = function
+    0 -> Zero
+  | n -> if n > 0 then Pos (nat_of_int n)
+         else Neg (nat_of_int (-n));;
+
+
+type 'a option = None | Some of 'a;; (* Tipo polimórfico *) OPTION NO ES UN TIPO ES UN CONTRUCCIÓN DE TIPOS
+
+Así están definidos los tipos optión del otro día.
+
+
+AHORA VA A JUNTAR TODO AHHHHHHHHHHHHHHHHH:
+
+type 'a lista = Vacia | Cons of 'a * 'a lista;;
+
+# Vacia;;
+- : 'a lista = Vacia
+# Cons (3, Vacia);;
+- : int lista = Cons (3, Vacia)
+# Cons (2,Vacia);;
+- : int lista = Cons (2, Vacia)
+# let l3 = Cons (3, Vacia);;
+val l3 : int lista = Cons (3, Vacia)
+# let l33 = Cons (3, l3);;
+val l33 : int lista = Cons (3, Cons (3, Vacia))
+
+Tenemos las list definidas
+
+El viernes nos contará algo que no viene definido el Ocaml.
+
+árboles binarios
+
+type 'a bintree = bien ejercicio pensarlo
+
+Las listas son arboles unarios, con solo una rama
