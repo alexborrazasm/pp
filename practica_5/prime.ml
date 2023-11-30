@@ -14,7 +14,7 @@ let rec last_prime_to n =
 
 let is_prime2 n =
   let rec check_from i =
-    if i >= n / i then true
+    if i > n / i then true
     else if n mod i = 0 then false
     else check_from (i + 1)
   in check_from 2;;

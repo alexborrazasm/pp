@@ -991,7 +991,7 @@ let come (i1,j1) (i2,j2) =
   i1 = i2 || j1 = j2 || abs (i2-i1) = abs (j2 - j1);;
 
 let compatible p l =
-  not (List.exist (come p) l);;
+  not (List.exists (come p) l);;
 
 let queens n =
   let rec completar path i j =
@@ -1019,7 +1019,7 @@ let queens n =
          else completar oath i (j+1)
     in completar [] 1 1;;
 
-vamos a escribirlo son None y Some, a la tradicional:
+vamos a escribirlo sin None y Some, a la tradicional:
 
 let queens n =
   let rec completar path i j =
@@ -1268,3 +1268,75 @@ El viernes nos contará algo que no viene definido el Ocaml.
 type 'a bintree = bien ejercicio pensarlo
 
 Las listas son arboles unarios, con solo una rama
+
+
+HA FALTADO EL VIERNES, LO SIENTO ALEX DEL FUTURO
+
+siguiente clase 28 nov:
+
+debio dar arboles binarios por lo que dijo
+ahora está hablando de arbiles estrictamente binarios o no
+
+type 'a bintree =
+    Empty 
+  | Node of 'a = 'a bintree * 'a bintree;;
+
+let rec nodos = function
+    Empty -> 0
+  | Node (_,i,d) -> 1 + nnodos i + nnodos d;;
+
+let rec altura = function
+    Empty -> 0
+  | Node (_,i,d) -> i + nnodos i + nnodos d;;
+
+let rec tmax = function
+    Empty -> raise (Invalid_argument "tmax")
+  | Node me falta cosas
+
+
+
+otro, esto era del otro día que no vine
+
+Con esto voy a representar cualquier árbol estrictamente binario
+
+type 'a st_bintree =
+    Node of 'a * 'a st_bintree * 'a st_bintree
+  | Leaf of 'a;;
+
+let rec hojas = function
+    Leaf v -> [v]
+  | Node (_, i, d) -> hojas i @ hojas d;;
+
+un árbol que no pueda tener el arbol vacio:
+
+type 'a ne_bintree =
+    Node of 'a * 'a ne_bintree option * 'a ne_bintree option;;
+
+Entran todos menos los vacios
+
+let leaf v = Node (v, []);;
+
+let t_6 = Node (6,[leaf (5; lead 11)]);;
+
+faltan cosas
+
+let rec nnodos Node (_, lr) =
+    List.fold_left (+) 1 List.map nnodos lr;;
+
+let rec nnodos Node (_, lr) =
+    List.fold_left (fun n t -> n + nodos t) 1 lr;;
+
+cualquier árbol que tenga, al menos, una rama se puede dividir en 2 árboles, entonces:
+
+let rec nnodos = function 
+    Node (_, []) -> 1
+  | Node (r, h::t) -> nnodos h + nnodos (Node (r, t));;
+
+la mejor, la última, QUEDAN 6 CLASES AAAAAAAAAAAAAAAAAH
+
+proxima día el lado oscuro, la parte imperativa del lenguaje, venir preparados
+
+como se carga un módulo, #load "counter.cmo";;
+Counter.next;;
+
+Si no quiero poner counter pongo, open Counter;;

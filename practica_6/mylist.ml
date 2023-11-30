@@ -234,7 +234,7 @@ let partition f l =
 let rec fold_left f acc list = 
   match list with
   | [] -> acc
-  | h::t -> fold_left f (f acc h) list;;
+  | h::t -> fold_left f (f acc h) t;;
 
 (* ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b *)
 let rec fold_right f list acc = 

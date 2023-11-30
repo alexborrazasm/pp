@@ -8,14 +8,16 @@ let rec length n =
   if n = 1 then 0
   else 1 + length (f n);;
 
-let top n =
-  let rec aux n high =
-    let fn = f n 
-  in
-    if fn = 1 then high
-    else if fn > high then aux fn fn 
-    else aux fn high
-  in aux n 1;;
+let top n = 
+  if n = 1 then 1
+  else
+    let rec aux n high =
+      let fn = f n 
+    in
+      if fn = 1 then high
+      else if fn > high then aux fn fn 
+      else aux fn high
+    in aux n 1;;
 
 let length'n'top n =
   let rec aux n high c=
