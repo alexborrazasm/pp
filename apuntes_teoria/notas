@@ -1013,23 +1013,24 @@ let queens n =
     if i > n then Some path   (* Hemos terminado *)
     else if j > n then None   (* No se puede completar *)
     else if compatible (i,j) path
-            then match completar path ((icj)::path) (i+1) 1 with
+            then match completar path ((i,j)::path) (i+1) 1 with
                   None -> completar path i (j+1)
                 | Some sol -> Some sol
          else completar oath i (j+1)
     in completar [] 1 1;;
-
+  
 vamos a escribirlo sin None y Some, a la tradicional:
 
 let queens n =
   let rec completar path i j =
     if i > n then path                   (* Hemos terminado *)
     else if j > n then raise Not_found   (* No se puede completar *)
-    else if compatible (i,j) path
-            then try completar path ((icj)::path) (i+1) 1 with      (* Try _________ with, se evalua lo que hay en la mitad, si da fallo hace lo que le digamos*)
-                     Not_found -> completar path i (j+1)
-         else completar oath i (j+1)
-    in completar [] 1 1;;
+    else if compatible (i,j) path 
+      then try completar ((i,j)::path) (i+1) 1 with
+            | Not_found -> completar path i (j+1)
+    else completar path i (j+1)
+  in completar [] 1 1;;
+(* Try _________ with, se evalua lo que hay en la mitad, si da fallo hace lo que le digamos*)
 
 
 Como es una try with en general:
@@ -1340,3 +1341,117 @@ como se carga un módulo, #load "counter.cmo";;
 Counter.next;;
 
 Si no quiero poner counter pongo, open Counter;;
+
+
+Otro día, falte el viernes, dio la aparte imperativa del lenguaje y ahora toca seguir
+habla de ;
+
+match <e> with es similar a un switch
+
+vamos con los bucles:
+
+<b> bool
+
+while <b> do <e> done
+
+cuando es false daria un unit y si no evalua e
+
+let rec fact n =
+  if n <= 0 then 1
+  else n * fact (n-1);;
+
+hacer esta función pero sin usar rec
+
+un bucle sin variables no sirve para nadaw, en funcional algo que se evalue false o true siempre será false o true;
+
+vamos alla:
+
+let fact n = 
+  let f = ref 1 in
+  let i = ref 1 in 
+  while !i <= n do
+    f:= !f * !i;
+    i := !i + 1
+  done;
+  !f;;
+
+como vemos los bucles son más parecidos a la tail reculsion
+
+let fect n =
+  let rec aux (f,i) =
+    if i <= n then
+      aux (f * i, i + 1)
+    else f
+  in aux (1,1);;
+
+bucle for:
+
+for <i> = <i1> to <i2>
+  do <e> done
+
+for <i> = <i1> down to <i2>
+  do <e> done
+
+fact sin recursividad y sin el bucle while:
+
+let fact n =
+  let f = ref 1 in
+  for i = 1 to n do
+      f := !f * i
+  done;
+  !f;;
+
+vamos a aumentar la diversión del imperactivo
+
+let v = [|1; 10; 100|];;
+val v : int array = [|1; 10; 100|]
+no es una lista, mmmmmmmmmm
+diferecias con la int list:
+-rendimiento, en a' array puedes acceder al elemento de cualquiera posición con coste constante, adiferencia de las listas
+-los array está numerados, de 0 a (n9-1)
+-tambien tenemos el módulo Array
+
+# Array.length;;
+- : 'a array -> int = <fun>
+
+# Array.get;;  (* Similar a nth pero co coste constante *)
+- : 'a array -> int -> 'a = <fun>
+
+abrebiado, v.(1);;
+
+# v.(1);;
+- : int = 10
+
+recuerda que puedes dejar de llamar al modulp por Array.nombre con open Array
+
+# open Array;;
+# set v 2 (v.(1) + 2* v.(2));;
+- : unit = ()
+# v;;
+- : int array = [|1; 10; 210|]
+
+devuelve unit, pero no nos importa lo que devuelva, lo importante es que cambia v
+
+v.(2) <- v.(1) + 2 * v.(2);; (* set abreviado *)
+
+# v.(2) <- v.(1) + 2 * v.(2);;
+- : unit = ()
+# v;;
+- : int array = [|1; 10; 430|]
+
+existe init para array?
+
+# Array.init 20 succ;;
+- : int array =
+[|1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20|]
+
+# make 10_000 'a';;
+- : char array =
+[|'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a';...|]
+
+array de 10_000 char 'a', igual que el de List.make pero para Array
+
+Array.copy hace una copia del array en ese momento
+
+en rec con ! nos referimos al valor, similar a punteros parece, mirar.
+
