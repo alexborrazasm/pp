@@ -1,5 +1,3 @@
-open Bintree
-
 (* ('a -> 'a -> bool) -> 'a bintree -> bool *)
 let rec is_bst ord tree =
   let rec aux = function
@@ -48,5 +46,21 @@ let perfecto tree =
   nodos = nodos_p;;
 
 (* 'a bintree -> bool *)
-let casi_completo = 1
-
+let casi_completo tree =
+  let rec altura = function
+  | Empty -> 0
+  | Node (_, i, d) -> 1 + max (altura i) (altura d)
+  in let nodos_last = int_of_float (2. ** float_of_int (altura tree))
+  in 
+  let rec aux acc ans ltree= match ans,ltree with
+    | _,[] -> acc   (* Hemos acabado *)
+    | _,Empty::rest -> aux (acc + 1) true rest   (* Contamos Empty *)
+    | true, Node (r, i, d) :: _ -> -1 (* Empty y luego un Node *)
+    | false,Node (r, i, d) :: rest ->  (* Recorremos en anchura Nodes *)
+      let cola = List.rev_append (List.rev rest) [i; d] 
+      in  aux 0 false cola
+  in let nodos_empty = aux 0 false [tree]
+  in 
+    if (nodos_empty > 1) && (nodos_empty < nodos_last) then true
+    else false;;
+    
