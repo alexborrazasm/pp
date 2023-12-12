@@ -1455,3 +1455,143 @@ Array.copy hace una copia del array en ese momento
 
 en rec con ! nos referimos al valor, similar a punteros parece, mirar.
 
+
+TREMENDO PUENTE, VUELTA A CLASE, MARTES 12
+
+type person = {name : string; age : int}
+
+que es? un regustro de datos, un struct en C.
+
+tiene 2 componentes un string y un int.
+
+es un registro de 2 campos.
+
+se puede hacer patermaching en los registros
+
+older : person -> person
+
+let order p =
+  {name = p.name; age = p.age + 1};;
+
+let older {name = n; age = a} =
+  {name = n; age = a + 1};;
+
+let older p =
+  {p with age = p.age + 1; name = ""};;
+
+puedo hacer otra definición de los registros:
+
+type person = {name : string; mutable age : int}
+
+let p2 : person = {name = "Marta"; age = 18}
+
+como modifico el valor mutable?
+
+p2.age <- 28;;
+
+let aged p <- p.age + 1;;
+
+aged p2; p2;; ahora así puedo imprimir el valor
+
+type 'a var = {mutable valor : 'a};;
+
+# {valor = 1};;
+- : int var = {valor = 1}
+# {valor = "Hola"};;
+- : string var = {valor = "Hola"}
+
+let initvar x = {valor = x};;
+
+# initvar 10;;
+- : int var = {valor = 10}
+# initvar "Casa";;
+- : string var = {valor = "Casa"}
+
+let (!!) v = v.valor;;
+
+let n = initvar 7;;
+
+# let n = initvar 7;;
+val n : int var = {valor = 7}
+# !!n;;
+- : int = 7
+
+ACABO DE IMPLEMENTAR LAS VARIABLES EN OCAML, de hecho así están implementadas en Ocaml.
+
+cambiamos de tema: ejemplo antiguo
+
+la función next:
+
+let n = ref 0
+
+let next () = 
+  n := !n + 1;
+  !n
+
+let reset () =
+  n := 0
+
+sin usar una variable global:
+
+let next  =
+  let n ref 0 in
+    function () ->
+    n := !n + 1;
+    !n;;
+
+pero como hacemos ahora el reset?
+
+let next, reset =
+  let n = ref 0 in
+  (function () -> n := !n + 1; !n),
+  (function () -> n := 0);;
+
+  Otra menera seria usar un módulo
+
+todo este tiempo con ocamlc algo.ml -i algo.mli estabamos compilando modulos
+
+para cargarlos en el compilador interactivo #load "counter.cmo";;
+
+entre comillas la ruta
+
+HACER UN MÓDULO EN UN SOLO FICHERO:
+
+module Contador : sig
+  val next : unit -> int
+  val reset : unit -> unit
+end = struct
+  let n = ref 0
+  let next () = 
+    n := !n + 1;
+    !n
+  let reset () =
+    n := 0
+end
+
+esto es una fuctor, es como una funcion pero devuelve módulos
+
+module Contador () : sig
+  val next : unit -> int
+  val reset : unit -> unit
+end = struct
+  let n = ref 0
+  let next () = 
+    n := !n + 1;
+    !n
+  let reset () =
+    n := 0
+end
+
+module Contador :
+  functor () -> sig val next : unit -> int val reset : unit -> unit end
+
+# module Carne = Contador ();;
+module Carne : sig val next : unit -> int val reset : unit -> unit end
+# module Fruta = Contador ();;
+module Fruta : sig val next : unit -> int val reset : unit -> unit end
+# module Peixe = Contador ();;
+module Peixe : sig val next : unit -> int val reset : unit -> unit end
+
+BRUTAL
+
+hay muchos módulos que no son módulos, son functor, entonces lo que pasa es que te crea modulos
