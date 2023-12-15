@@ -1595,3 +1595,224 @@ module Peixe : sig val next : unit -> int val reset : unit -> unit end
 BRUTAL
 
 hay muchos módulos que no son módulos, son functor, entonces lo que pasa es que te crea modulos
+
+OTRO DÍA VIERNES
+
+habla de next, que se podŕia hacer con modulos
+
+el uso de funtores, que son funciones que devuelven modulos, que si necesitamos varios next por ejemplo
+los podría hacer con un funtor, en lugar de definir el modulo varias veces.
+
+ESTES MODULOS PUEDEN FUNCIONAR COMO OBJETOS
+
+los registros o structs en C, también podría funcionar next
+
+type counter = {next : unit -> int ; reset: unit -> unit}
+
+let counter = 
+  let n = ref 0 in
+  {next = (function () -> incr n; !n); 
+   reset = (function () -> n := 0)};;
+
+A todo esto existe la función incr;;
+# incr;;
+- : int ref -> unit = <fun>
+
+# counter.next ();;
+- : int = 1
+# counter.next ();;
+- : int = 2
+# counter.next ();;
+- : int = 3
+# counter.next ();;
+- : int = 4
+# counter.next ();;
+- : int = 5
+# counter.reset ();;
+- : unit = ()
+# counter.next ();;
+- : int = 1
+# counter.next ();;
+- : int = 2
+
+lo mismo que con modulos
+
+los registros pueden funcionar como módulos
+
+también podría hacer una función que devuelva un counter, como con los funtores
+
+let new_counter () =
+  let n = ref 0 in
+  {next = (function () -> incr n; !n); 
+   reset = (function () -> n := 0)};;
+
+# let c = new_counter ();;
+val c : counter = {next = <fun>; reset = <fun>}
+# let c' = new_counter ();;
+val c' : counter = {next = <fun>; reset = <fun>}
+# c.next ();;
+- : int = 1
+# c.next ();;
+- : int = 2
+# c'.next ();;
+- : int = 1
+
+
+VAMOS CON OBJETOS
+en Ocaml no se suele usar por las formas alternativas de hacer las cosas
+
+let counter = object
+  val mutable n = 0
+  method next = n <- n + 1 ; n    (* Suma 1 *)
+  method reset = n <- 0           (* Resetea el contador a 0 *)
+end;;
+
+val counter : < next : int; reset : unit > = <obj>
+
+2 métodos, el next y el reset
+
+todos los objetos que tengan 2 metodos en ocaml son del mismo tipo
+
+un propiedad de los obj es que cambian de estado, normalmente esto se representa con una variable, mutable
+no es lo mismo que un 'a ref, es mucho más parecido a un registro "en C" o elementos de un vector
+
+# counter#next;;
+- : int = 1
+# counter#next;;
+- : int = 2
+# counter#next;;
+- : int = 3
+# counter#next;;
+- : int = 4
+# counter#reset;;
+- : unit = ()
+# counter#next;;
+- : int = 1
+# counter#next;;
+- : int = 2
+
+se invocan con nombre del objeto#metodo
+
+# counter#next;;
+- : int = 4
+# counter#next + (counter#reset; 2 * counter#next);;
+- : int = 4
+
+ojo, no ha dado 7, por que? por que se avalua primero la expresión de la derecha
+
+MUCHO CUIDADO
+
+let doble o = 2 * o#next;;
+
+# let doble o = 2 * o#next;;
+val doble : < next : int; .. > -> int = <fun>
+
+POLIMORFIMOS CON OBJETOS ARRIBA, con registros no podría hacerlo, solo valdría para ese tipo de registros
+
+# counter#next;;
+- : int = 1
+# doble counter;;
+- : int = 4
+
+let counter' = object
+  val mutable n = 100
+  method next = n <- n + 2 ; n    (* Suma 1 *)
+end;;
+
+val counter' : < next : int > = <obj>
+
+# doble counter';;
+- : int = 204
+
+# doble counter';;
+- : int = 208
+
+counter y counter' no son del mismo tipo, pero gracias al polimorfismo en obj puedo aplicar la función doble,
+está solo requiere que un obj tenga una función del tipo next de tipo int
+
+let doble_o o = object
+  val mutable n = o#next
+  method next = n <- n + 3; n
+end;;
+val doble_o : < next : int; .. > -> < next : int > = <fun>
+
+# doble_o counter;;
+- : < next : int > = <obj>
+# doble_o counter';;
+- : < next : int > = <obj>
+
+# let c3 = doble_o counter' ;;
+val c3 : < next : int > = <obj>
+# c3#next;;
+- : int = 113
+
+AHORA quiro crear varios obj del mismo tipo, como con los modulos y los registros
+un función
+
+let new_counter () = object
+  val mutable n = 0
+  method next = n <- n + 1 ; n    (* Suma 1 *)
+  method reset = n <- 0           (* Resetea el contador a 0 *)
+end;;
+
+val new_counter : unit -> < next : int; reset : unit > = <fun>
+
+# let c1 = new_counter ();;
+val c1 : < next : int; reset : unit > = <obj>
+# let c2 = new_counter ();;
+val c2 : < next : int; reset : unit > = <obj>
+# let c3 = new_counter ();;
+val c3 : < next : int; reset : unit > = <obj>
+# c1#next;;
+- : int = 1
+# c1#next;;
+- : int = 2
+# c2#next;;
+- : int = 1
+# c3#next;;
+- : int = 1
+# c3#next;;
+- : int = 2
+# c2#next;;
+- : int = 2
+
+c1, c2, c3 son del mismo tipo
+
+# [c1;c2;c3];;
+- : < next : int; reset : unit > list = [<obj>; <obj>; <obj>]
+
+que falta aqui? las clases
+
+que es una clase?
+normalmente en los lenjuages orientados a abj tenemos que definiar la clase antes que los obj
+aqui puedo tener obj sin clase, pero tambien existen las clases, en ocaml podría vivir sin las clases
+
+las clases proporcionan la caracteristicas de la herencia, con la función new_counter no lo tengo
+hasta ahora aqui hice objcetos inmediatos
+
+como creo obj como clases?
+
+una clase es una receta para crear obj
+
+class new_counter = object
+  val mutable n = 0
+  method next = n <- n + 1 ; n    (* Suma 1 *)
+  method reset = n <- 0           (* Resetea el contador a 0 *)
+end;;
+
+class new_counter :
+  object val mutable n : int method next : int method reset : unit end
+
+# let cc = new new_counter;;
+val cc : new_counter = <obj>
+
+# cc;;
+- : new_counter = <obj>
+
+cuando defino clases lo que estoy haciendo es definir un alias, para un tipo de obj, ahora new_counter es el nombre de los
+obj que tienen el metodo reset y next
+
+pero son del mismo tipo
+
+# [c1;cc];;
+- : new_counter list = [<obj>; <obj>]
