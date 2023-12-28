@@ -1816,3 +1816,98 @@ pero son del mismo tipo
 
 # [c1;cc];;
 - : new_counter list = [<obj>; <obj>]
+
+---------------------------------------------
+OTRO DÍA:
+los objetos son valores, y hablamos del polimorfismo de los objetos
+
+object atributos end
+
+let c2 = new_counter ();;
+
+para definir clases era:
+
+new counter
+
+class counter = object
+	val mutable n = 0
+	method next = n <- n + 1 ; n
+	nethod reset : int
+end;;
+
+class counter_with_set = obsject
+	inherit counter
+	method set x = n <- x
+end;;
+
+algo de la clase counter_with_set no seria igual al tipo counter, pero lo podría restringir,
+con:
+
+c5 :> counter, siendo c5 un valor del tipo counter_with_set
+
+entonces ahora podría hacer una lista de counter con c5
+
+aunque en la lista se usa como  un counter, yo ouedo acceder a el con set y modificarlo y se modifica en la lista con set
+
+ME MUERO PUTA MERDA DE CATARRO
+
+inherit heredar de una clase anterior
+
+se puede editar un clase, ej:
+
+class counter_with_init ini = object (self)
+	inherit counter_with_set
+	method reset = (* n <- ini *)
+			self#set ini
+	initializer (* n <- ini *) self#reset
+end;;
+
+alias para hacer referencia a los elementos de la clase, metodo inicializador
+
+un metodo permite una espacio de reculsibidad abierta
+
+class counter_with_init'n'fin ini fin = object (self)
+	inherit counter_with_init ini as super
+	method next = let next = super#next in
+		      if next < fin then next
+		      else (self#reset; super#next)
+end;;
+
+se podría modificar el paso, un contador de step en step
+
+class counter_with_step = object (self)
+	inherit counter_with_init 0 as super
+	val mutable step = 0
+	method next = n <- n + step; n
+	method set_step s = step <- s
+	method reset = super#reset; self#set_step 1
+end;;
+
+esto como vemos es muy laborioso para hacer estas cosas, tenemos maneras más eficientes para la maquina y menos complicadas de escribir
+
+esto tiene sentido sobre todo para interfaces web, donde tenemos widgets que se llaman etc.
+
+en el moodle puso capitulos de libros que hablan más de objetos en ocaml, y las clases de la pandemia de objetos
+
+polimorfismo con clases:
+
+class ['a] stack =
+	object
+	   val mutable l = ([] : 'a list)	(* instance variable *)
+	   method push x =
+	      l <- x :: l
+	   method pop = match l with 		(* push method *)
+	      [] -> raise EmptyStack
+	    | h::t -> l <- t; h
+	   method peek = match l with		(* peek method *)
+	      [] -> raise EmptyStack
+            | h::_ -> h
+end;;
+
+maldita la falta que hacia definir esto como un objeto, dado que las listas en ocaml, ya trabajan como un stack
+
+
+viernes no hay clase, materia por terminada, preguntemos lo que queramos por teams, día 30 es el límite
+
+podemos traer notas apuntes, cosas que quepan en el pupitre y cada uno para si mismo xd
+
