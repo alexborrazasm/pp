@@ -21,85 +21,6 @@ let matrix1   = [|[|Some 1; Some 1; Some 1|];
 [|Some 1; Some (-1); Some 1|];
 [|Some 1; Some 1; Some 1|]|];;
 
-let is_square matrix = (* Función que nos dice si una matriz es cuadrada *)
-  let row = Array.length matrix 
-  in for i = 0 to row - 1 do 
-    if Array.length matrix.(i) <> row then raise (Failure "Invalid_argument “dijkstra”")
-  done;;
-                                   
-let greater_than_zero matrix = (* Función que no dice su una matriz cuadrada tiene algún número negativo *)
-  let row = Array.length matrix 
-  in for i = 0 to row - 1 do
-    for j = 0 to row - 1 do
-      if matrix.(i).(j) = None then ()
-      else if matrix.(i).(j) < Some 0 then raise (Failure "Invalid_argument “dijkstra”")
-    done
-  done;;
-
-let is_square_positive matrix = (* Función que nos dice si una matriz es positiva y cuadrada *)
-  let aux matrix =
-    let row = Array.length matrix in 
-    for i = 0 to row - 1 do
-      for j = 0 to row - 1 do
-        if matrix.(i).(j) = None then ()
-        else if matrix.(i).(j) < Some 0 then raise (Failure "Invalid_argument “dijkstra”")
-      done
-    done
-  in try aux matrix with
-  | Invalid_argument "index out of bounds" -> raise (Failure "Invalid_argument “dijkstra”");;
-
-let dijkstra matrix =
-  let is_square_positive matrix = (* Función que nos dice si una matriz es positiva y cuadrada *)
-    let aux matrix =
-      let row = Array.length matrix in 
-      let matrix_copy = Array.make_matrix row row None in
-      for i = 0 to row - 1 do
-        for j = 0 to row - 1 do
-          matrix_copy.(i).(j) <- matrix.(i).(j);
-          if matrix.(i).(j) = None then ()
-          else if matrix.(i).(j) < Some 0 then raise (Failure "Invalid_argument “dijkstra”")
-        done
-      done
-    in try aux matrix with
-    | Invalid_argument "index out of bounds" -> raise (Failure "Invalid_argument “dijkstra”")
-  in if (is_square_positive matrix) = () then matrix_copy;;
-
-(* int option array array -> int option array array *)
-let dijkstra matrix =
-  let is_square_positive_copy matrix =
-    let aux matrix =
-      let row = Array.length matrix in
-      let matrix_copy = Array.make_matrix row row None in
-      for i = 0 to row - 1 do
-        for j = 0 to row - 1 do
-          match matrix.(i).(j) with
-          | None -> ()
-          | Some x -> if x < 0 then raise (Failure "Invalid_argument dijkstra") else ();
-          matrix_copy.(i).(j) <- matrix.(i).(j)
-        done
-      done;
-      matrix_copy
-    in
-    try aux matrix with
-    | Invalid_argument "index out of bounds" -> raise (Failure "Invalid_argument dijkstra")
-  in
-  let matrix_sol = is_square_positive_copy matrix in 
-  let m = Array.length matrix_sol - 1 in
-  
-  for n = 0 to m do 
-    let not_visited = new_queue () in
-    for j = 0 to m do
-      insert not_visited matrix.(n).(j) j;
-    done;
-
-    while not (extract_opt not_visited = None) do
-      match extract not_visited with
-      | flgo -> coasoas
-      | alfo -> cosasas
-    done;
-  done;
-  matrix_sol
-  ;;
 (*----------------------------------------------------------------------------------*)
 
 let is_square matrix = (* Función que nos dice si una matriz es cuadrada *)
@@ -212,10 +133,3 @@ let dijkstra prev =
   done;
   dist
   ;;
-  while not (is_empty not_visited) do
-    let (current_dist, u) = extract not_visited in
-    for v = 0 to rows - 1 do
-      let alt = Option.value current_dist max_int + Option.value prev.(u).(v) max_int in
-      if alt < Option.value dist.(n).(v) max_int then begin
-        dist.(n).(v) <- Some alt;
-        insert not_visited (Some alt) v;
