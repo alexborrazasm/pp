@@ -7,6 +7,7 @@ Nota prácticas final: 2.0/2.0.
 ## ¿Como instalar Ocaml?
 
 1. **Abrimos una terminal en linux**
+    
     en debian/ubuntu/mint:
     ```bash
     sudo apt update 
