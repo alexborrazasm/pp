@@ -262,6 +262,10 @@ Solo hay un valor de tipo unit.
 
 Como se le pasa un argumento a un operación en Ocaml:
 
+función argumento
+
+Nota: para pasar un árgumento negativo, por ejemplo de tipo int es necesario poner (-3).
+
 ```ocaml
 #  2. *. asin 1.0;;
 - : float = 3.14159265358979312
@@ -377,10 +381,13 @@ Aquí x representa el valor de un posible argumento que le entre a la función. 
 ```
 Como se evalua:
     
-    1. (function x -> 2 * x) (2 + 3) + 1;; 
-    2. (function x -> 2 * x) 5 + 1;;
-    3. 10 + 1;;
-    4. int 11;;
+1. (function x -> 2 * x) (2 + 3) + 1;; 
+
+2. (function x -> 2 * x) 5 + 1;;
+
+3. 10 + 1;;
+
+4. int 11;;
 
 Nota: Si tenemos varias reglas, el orden importa, cuando varias hacen *math* se utiliza la primera.
 
@@ -794,4 +801,5 @@ val per_area : float -> float * float = <fun>
 ```
 Ahora pi solo se calcula una vez, a diferencia de las función anterior.
 
+## La Recursividad
 

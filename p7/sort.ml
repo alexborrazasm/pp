@@ -238,5 +238,3 @@ let rec msort_g ord l =
     | [] | [_] -> l
     | _ -> let l1, l2 = split_t l
           in merge_t (msort_g ord l1, msort_g ord l2);;
-         
-revisar-----------------

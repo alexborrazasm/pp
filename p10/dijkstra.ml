@@ -1,44 +1,119 @@
-open M_MinPrioQueue;;
-(* colas de prioridad (mínima) mutable para elementos de tipo 'b con prioridades de tipo 'a *)
-
-let dijkstra prev =
-  let rows = Array.length prev in  (* número de filas *)
-  let is_square_positive matrix =   (* Función que nos dice si una matriz es positiva y cuadrada*)
-  for i = 0 to rows - 1 do
-    if Array.length matrix.(i) <> rows then raise (Failure "Invalid_argument “dijkstra”");
-    for j = 0 to Array.length matrix.(i) - 1 do
-      if matrix.(i).(j) = None then ()
-      else if matrix.(i).(j) < Some 0 then raise (Failure "Invalid_argument “dijkstra”")
-    done
-  done in
-
-  is_square_positive prev;  (* Ejecutamos las comprobaciones *)
-
-  let dist = Array.make_matrix rows rows None in
-
-  for n = 0 to rows - 1 do 
-    let not_visited = Array.make rows false in
-    let heap = new_queue () in
-    for j = 0 to rows - 1 do 
-      not_visited.(j)<-true;         (* Nodos ya visitados *)
-      dist.(n).(j)<-prev.(n).(j);    (* Copiamos el grafo en la solución *)
-      insert heap prev.(n).(j) j;    (* Metemos todos los nodos en la cola de prioridad *)
-    done;
-    not_visited.(n)<-false;          (* Ya hemos visitado el nodo inicial *)
-
-    let min = ref (extract heap) in
-    (*let alt = Some max_int in*)
-
-    while !min <> (None, -1) do
-      (*match !min with (prio, node) -> 
-        not_visited.(node)<-false;
-          for i = 0 to rows - 1 do
-            if not_visited.(i) && dist.(n).(i) < alt then
-              alt := dist.(n).(i);
-          done;*)
-      min := (try extract heap with
-              | EmptyQueue -> (None, -1))
-    done;
-  done;
-  dist
+let square v =
+  let n = Array.length v in
+  Array.for_all (fun r -> Array.length r = n) v
 ;;
+
+let no_neg matrix =
+  let no_n_row row = Array.for_all (fun x -> match x with 
+      | Some y -> y >= 0 
+      | None -> true
+    ) row
+  in Array.for_all no_n_row matrix
+;;
+
+let dijkstra w =
+  if not (square w) || not (no_neg w) then
+    raise (Invalid_argument "dijkstra")
+  else
+    let n = Array.length w in 
+    let d = Array.make_matrix n n None in 
+    
+    for i = 0 to n - 1 do
+      for j = 0 to n - 1 do 
+        match w.(i).(j) with
+        | Some weight -> d.(i).(j) <- Some weight
+        | None -> ();
+      done;
+    done;
+
+    for k = 0 to n - 1 do
+      for i = 0 to n - 1 do
+        for j = 0 to n - 1 do
+          match (d.(i).(k), d.(k).(j)) with
+          | (Some d_ik, Some d_kj) ->
+              let new_distance = d_ik + d_kj in
+              (match d.(i).(j) with
+               | Some d_ij -> d.(i).(j) <- Some (min d_ij new_distance)
+               | None -> d.(i).(j) <- Some new_distance);
+          | _ -> ();
+        done;
+      done;
+    done;
+    
+    for i = 0 to n - 1 do
+      d.(i).(i) <- Some 0
+    done;
+    
+    d
+;;
+
+(*
+
+let v1 = 
+  [|[|Some 2; Some 1; Some 2|]; 
+    [|Some 3; Some 0; None|];
+    [|Some 0; Some 2; None|]|];;
+    
+ let sol1 =
+ [|[|Some 0; Some 1; Some 2|]; 
+   [|Some 3; Some 0; Some 5|];
+   [|Some 0; Some 1; Some 0|]|];;
+ 
+ 
+ let v2 = 
+ [|[|None;   Some 0; Some 2; Some 3|]; 
+   [|None;   Some 1; Some 8; Some 8|];
+   [|None;   Some 5; None;   Some 2|]; 
+   [|Some 0; Some 3; Some 5; None|]|];;
+  
+ let sol2 =   
+ [|[|Some 0; Some 0; Some 2; Some 3|]; 
+   [|Some 8; Some 0; Some 8; Some 8|];
+   [|Some 2; Some 2; Some 0; Some 2|]; 
+   [|Some 0; Some 0; Some 2; Some 0|]|];;
+   
+     
+ let v3 = 
+ [|[|Some 9; Some 8; Some 10; None;   Some 4|];
+   [|Some 3; Some 4; Some 2;  Some 6; Some 5|];
+   [|Some 9; Some 3; Some 9;  Some 5; Some 10|];
+   [|None;   Some 2; Some 10; Some 9; Some 5|];
+   [|Some 3; Some 5; Some 5;  Some 3; None|]|];;
+     
+ let sol3 = 
+ [|[|Some 0; Some 8; Some 9; Some 7; Some 4|];
+   [|Some 3; Some 0; Some 2; Some 6; Some 5|];
+   [|Some 6; Some 3; Some 0; Some 5; Some 8|];
+   [|Some 5; Some 2; Some 4; Some 0; Some 5|];
+   [|Some 3; Some 5; Some 5; Some 3; Some 0|]|];;
+   
+   
+ let v4 = 
+   [|[|None;    Some 10; Some 27; Some 19; Some 15; None;    Some 71; None;    None;    Some 41|];
+     [|Some 99; Some 96; None;    Some 33; Some 32; Some 25; None;    Some 37; Some 23; Some 38|];
+     [|Some 74; None;    Some 26; Some 85; Some 99; Some 43; Some 91; None;    Some 96; Some 36|];
+     [|Some 94; Some 80; Some 10; Some 89; Some 57; Some 24; None;    Some 54; None;    Some 17|];
+     [|Some 78; Some 34; Some 41; Some 78; Some 10; Some 28; Some 25; Some 82; Some 44; Some 72|];
+     [|Some 68; Some 95; Some 98; None;    Some 28; Some 27; Some 75; Some 54; Some 22; Some 44|];
+     [|None;    Some 87; Some 69; Some 23; Some 43; Some 48; Some 31; Some 75; Some 34; Some 19|];
+     [|Some 94; Some 97; None;    Some 25; Some 38; Some 59; Some 53; Some 79; Some 72; Some 49|];
+     [|Some 67; Some 61; None;    Some 12; Some 86; None;    Some 95; Some 31; None;    Some 59|];
+     [|Some 24; Some 30; None;    Some 40; None;    Some 99; None;    Some 92; Some 71; Some 38|]|];;
+     
+ let sol4 = 
+ [|[|Some 0;  Some 10; Some 27; Some 19; Some 15; Some 35; Some 40; Some 47; Some 33; Some 36|];
+   [|Some 62; Some 0;  Some 43; Some 33; Some 32; Some 25; Some 57; Some 37; Some 23; Some 38|];
+   [|Some 60; Some 66; Some 0;  Some 76; Some 71; Some 43; Some 91; Some 96; Some 65; Some 36|];
+   [|Some 41; Some 47; Some 10; Some 0;  Some 52; Some 24; Some 77; Some 54; Some 46; Some 17|];
+   [|Some 68; Some 34; Some 41; Some 48; Some 0;  Some 28; Some 25; Some 71; Some 44; Some 44|];
+   [|Some 68; Some 62; Some 44; Some 34; Some 28; Some 0;  Some 53; Some 53; Some 22; Some 44|];
+   [|Some 43; Some 49; Some 33; Some 23; Some 43; Some 47; Some 0;  Some 65; Some 34; Some 19|];
+   [|Some 66; Some 72; Some 35; Some 25; Some 38; Some 49; Some 53; Some 0;  Some 71; Some 42|];
+   [|Some 53; Some 59; Some 22; Some 12; Some 64; Some 36; Some 84; Some 31; Some 0;  Some 29|];
+   [|Some 24; Some 30; Some 50; Some 40; Some 39; Some 55; Some 64; Some 67; Some 53; Some 0|]|];;   
+  
+  
+ dijkstra v1 = sol1 && dijkstra v2 = sol2 && dijkstra v3 = sol3 && dijkstra v4 = sol4;;  
+     
+ Utilizando la función dijkstra sobre esta expresión el compilador devuelve true.
+ *)

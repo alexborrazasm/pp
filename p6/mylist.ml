@@ -261,6 +261,3 @@ let rec remove_assoc x = function
   | (a,b)::t -> if a = x then t 
                 else (a,b) :: remove_assoc x t;;  
  (* not tail recursive *)
-
-
- ---REVISAR---

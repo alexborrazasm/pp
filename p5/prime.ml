@@ -5,11 +5,11 @@ let is_prime n =
   in check_from 2;; 
 
 let rec next_prime n =
-  if (is_prime (n + 1) = true) then n + 1
+  if is_prime (n + 1) then n + 1
   else next_prime (n + 1);;
 
 let rec last_prime_to n = 
-  if (is_prime n = true) then n
+  if is_prime n then n
   else last_prime_to (n - 1);;
 
 let is_prime2 n =
@@ -25,5 +25,3 @@ let is_prime2 n =
 # crono is_prime2 1_000_000_007;;
 - : float = 0.000862000000001472699 
 *)
-
-REVISAR---------------
