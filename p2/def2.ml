@@ -12,3 +12,5 @@ let is_a_letter c = let a = int_of_char c in (a > 64 && a < 123);;
 (* Los caracteres en ASCII que representan las letras van del 65 al 122 *)
 
 let string_of_bool = function true -> "verdadero" | false -> "falso";;
+
+REVISAr---------------------------------------------------------

@@ -25,3 +25,5 @@ let is_prime2 n =
 # crono is_prime2 1_000_000_007;;
 - : float = 0.000862000000001472699 
 *)
+
+REVISAR---------------

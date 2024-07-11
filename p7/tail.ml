@@ -80,3 +80,6 @@ let incseg l =
 
 let incseg l =
   fold_right' (fun x t -> x::map' ((+) x) t) l [];;
+
+
+REVISAR--------------

@@ -57,3 +57,5 @@ let rec casi_completo =
     | Node(_, i, d) -> let hi = altura i and hd = altura d in 
         ( hi = hd && (perfecto i) && (casi_completo d)) ||
         ( hi = (hd + 1) && (casi_completo i) && perfecto d);;
+
+REVISAR-------------

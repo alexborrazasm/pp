@@ -25,3 +25,5 @@ let rec is_queens_sol n = function
     if i > n || j > n then false  
     else if compatible (i,j) t then is_queens_sol n t
     else false;;
+
+    --REVISAR--

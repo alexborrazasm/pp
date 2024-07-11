@@ -7,4 +7,7 @@ let g1 n =
     then true
   else false;;
 
-let g2 n = (n mod 2 = 0);;      
+let g2 n = (n mod 2 = 0);;  
+
+
+REVISAR-----------------------
