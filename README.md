@@ -391,8 +391,6 @@ Como se evalua:
 
 Nota: Si tenemos varias reglas, el orden importa, cuando varias hacen *math* se utiliza la primera.
 
-
-
 ## Definiciones en OCaml
 
 Asocia un nombre con un valor. Se comienza con let:
@@ -769,7 +767,8 @@ Para devolver el primer tipo de dato, 'a. Recordemos:
 Para implementar operaciones que devuelven varios resultados necesitamos el producto cartesiano. Ejemplo:
 
 ```ocaml
-# let sp n m = n + m, n * m;;
+# let sp n m = n + m, n * m
+  ;;
 val sp : int -> int -> int * int = <fun>
 # sp 1 2;;
 - : int * int = (3, 2)
@@ -783,7 +782,8 @@ La función per_area calcula el perímetro y la área de un círculo, devolviend
   let pi = 2. *. asin 1. in
   (2. *. pi *. r,    (* Perímetro de un círculo, 2π * r * r *)
   pi *. r *. r)      (* Área de un cículo, π * r * r *)
-  ;;   
+  ;;
+val per_area : float -> float * float = <fun>
 # per_area 4.;;
 - : float * float = (25.1327412287183449, 50.2654824574366899)
 ```
@@ -802,4 +802,320 @@ val per_area : float -> float * float = <fun>
 Ahora pi solo se calcula una vez, a diferencia de las función anterior.
 
 ## La Recursividad
+
+La recursividad es una técnica en programación y matemáticas donde una función se llama a sí misma para resolver un problema.
+
+Se utiliza para dividir un problema complejo en subproblemas más simples del mismo tipo, lo que permite resolver problemas de manera más estructurada y fácil de entender.
+
+Componentes Clave de la Recursividad
+
+1. `Caso Base`: Es la condición que termina la recursión. Sin un caso base, la función se llamaría a sí misma indefinidamente. (Bucle infinito)
+
+2. `Caso Recursivo`: Es la parte de la función que divide el problema en subproblemas más pequeños y se llama a sí misma para resolver esos subproblemas.
+
+Ejemplo clásico em pseudocódigo
+
+```c
+// Sucesión de Fibonacci
+fib n =                                // n >= 0
+    si n <= 1 devolver n               // Caso base
+    si no fib (n - 1) + fib (n - 2);;  // Caso recursivo
+```
+
+### Recursividad NO terminal
+
+```ocaml
+# (* El cociente de la división antera *)
+  let rec quo x y = (* Solo tiene sentido si: x >= 0, y > 0 *)
+    if x < y then 0
+    else 1 + quo (x - y) y
+  ;;
+val quo : int -> int -> int = <fun>
+```
+Aqui va creciendo, es se llama recursividad no terminal, no tail recursion.
+
+#### ¿Por qué crece?
+
+En el caso: 
+```ocaml 
+else 1 + quo (x - y) y 
+```
+Cuando hacemos la llamada recursiva, ```quo (x - y) y```, nos queda `pendiente` sumarle 1, EN CADA LLAMADA, esas operaciones pendientes se va a acumular en la pila.
+
+### Recursividad Terminal
+
+```ocaml
+# (* El resto de la división entera *)
+  let rec rem x y = (* Solo tiene sentido si: x >= 0, y > 0 *)
+      if x < y then x
+      else rem (x - y) y
+  ;;
+val rem : int -> int -> int = <fun>
+```
+Aqui no crece, esto se llama reculsividad final o terminal, tail recursion.
+
+#### ¿Por qué NO crece?
+
+Como vemos en:
+```ocaml
+else rem (x - y) y
+```
+
+La llamada recursiva es la última operación, non vamos dejar operaciones en la pila.
+
+
+Esta última recursividad es mucho más eficiente. No existe espacio infinito para guardar la reculsividad, normalmente el espacio lo gestiona el sistema operativo o la máquina virtual de Ocaml, se llama pila de reculsividad, si se llena da ERROR de stack overflow.
+
+Una expresión reculsiva terminal nunca va a agotar la pila de reculsividad.
+
+Debería ser muy fácil determinal si es terminal o no, si lo estamos entendiendo.
+
+### Complejidad computacional
+
+Ahora vamos a juntar los 2 ejemplos anteriores:
+
+```ocaml
+# (* Ahora la división con cociente y resto *)
+  let div x y = quo x y, rem x y
+  ;;
+val div : int -> int -> int * int = <fun> 
+```
+Nota: Devuelve un [par](#tuplas-de-datos-o-pares).
+
+Si analizamos esto, hacemos "2 veces el reparto", lo cual desde el punto de vista computacional no tiene sentido.
+
+Vamo a redefinir la función:
+
+```ocaml
+# (* División con cociente y resto *) 
+  let rec div1 x y =
+    if x < y  then (0,x) (* Paso no reculsivo *)
+    else 1 + fst (div (x-y) y), snd (div (x-y) y)
+  ;;
+val div : int -> int -> int * int = <fun>
+```
+
+#### ¿Está mejor?
+
+Pareque si que, pero no hemos reduccido el número de pasos al contrario 2^n pasos. Tarda muchísimo.
+
+El error es calcular lo mismo 2 veces, lo cual de vuelta desde el punto de vista computacional no tiene sentido.
+
+Ahora:
+
+```ocaml
+# (* División con cociente y resto *)
+  let rec div2 x y =
+    if x < y  then (0,x) (* Paso no recursivo *)
+    else let (q,r) = div (x - y) y in
+      1 + q, r
+  ;;
+val div : int -> int -> int * int = <fun>
+```
+
+Y sin usar fst y snd, como se comentaba con [anterioridad](#en-el-caso-de-snd), no son muy usandas, dado que es más elegante y incluso visual hacerlo con el patrón.
+
+#### Comparación de [tiempos](#medir-tiempos-de-ejecución):
+
+```ocaml
+# crono2 div1 200000 2;;
+- : float = 0.0117689999999868178
+# crono2 div2 200000 2;;
+- : float = 0.0040679999999895244
+```
+
+Podemos ver una mejora considarable de los tiempos de ejecución.
+
+### Fibonacci, análisis:
+
+La versión que vimos en [pseudocódigo](#la-recursividad) hace nada en Ocaml sería:
+
+```ocaml
+# (* Sucesión de Fibonacci *)
+  let rec fib n = (* n >= 0 *)
+      if n <= 1 then n
+      else fib (n - 1) + fib (n - 2)
+  ;;
+val fib : int -> int = <fun>
+```
+
+Esta implementación recursiva simple de la sucesión de Fibonacci es ineficiente para valores n grande debido a la gran cantidad de llamadas repetidas a la función. Cada cálculo de fib(n) llama a fib(n-1) y fib(n-2), lo que resulta en una explosión exponencial en el número de llamadas recursivas. 
+
+El árbol de llamadas para `fib 4` sería:
+
+```scss
+fib(4)
+├── fib(3)
+│   ├── fib(2)
+│   │   ├── fib(1)
+│   │   └── fib(0)
+│   └── fib(1)
+└── fib(2)
+    ├── fib(1)
+    └── fib(0)
+```
+
+```ocaml
+# crono fib 20;;  (* Comparativa de tiempos *)
+- : float = 0.000330000000000000432
+# crono fib 40;;
+- : float = 3.320817
+```
+#### ¿Como optimizar está función?
+
+Podría hacer una función que para cada fic me devuelve los 2 últimos fic en lugar de solo 1.
+
+```ocaml
+# (* Sucesión de Fibonacci *)
+  let rec fib2 = function
+    1 -> (1, 0)
+    | n -> let f1, f2 = fib2 (n - 1) in
+      (f1 + f2, f1)
+  ;;
+val fib2 : int -> int * int = <fun>
+# (* Para que no me devuelva un par *)
+  let fib x = fst (fib2 x)
+  ;;
+val fib : int -> int = <fun>
+```
+Ahora los tiempos:
+
+```ocaml
+# crono fib 20;;
+- : float = 3.0000000004193339e-06
+# crono fib 40;;
+- : float = 3.0000000004193339e-06
+# crono fib 80;;
+- : float = 2.99999999997524469e-06
+```
+
+En la otra versión fib 80 lo acabaríamos abortando del tiempo que llevaba.
+
+#### ¿Es recursiba terminal fib2?
+
+No, dado que la última operación que hace no es la llamada recursiva, lo cual en este caso no importa, dado que con fib de 90 nos pasamos de [max_int](#límites-de-precisión-ocaml).
+
+### Hacer una función recursiva terminal:
+
+Cuando una recursivida no es termnial, puede dar el error de `stack overflow`. Esto el debido a que cada llamada de la función deja en la pila las operaciones pendientes.
+
+Pero si la recursivad es terminal (tail reculsion) nunca va a dar `stack overflow`.
+
+Hacer una funciín recursiva termnial es como si lo hiciera con un bucle, los buckes se traducen en funciones reculsivas terminales.
+
+Vamos a hacer fib recursivo termnial:
+
+```ocaml
+# (* Sucesión de Fibonacci, tail recursion *)
+  let fib' n =
+    let rec aux (i, f, a) =
+      if i = n then f               (* Caso base*)
+      else aux (i + 1, f + a, f)    (* Caso recursivo *)
+    in aux (0, 0, 1)
+  ;;
+val fib' : int -> int = <fun>
+```
+
+Ahora la última operación es la llamada recursiva  `else aux (i + 1, f + a, f)`, por lo tanto `nunca` vamos a temer `stack overflow` por muchas llamadas que haga la función.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Anexo
+
+## Límites de precisión Ocaml:
+
+El valor máximo y mínimo que pueden representar un int y un float, se puede consultar:
+
+```ocaml
+# max_int;;
+- : int = 4611686018427387903
+# min_int;;
+- : int = -4611686018427387904
+# max_float;;
+- : float = 1.79769313486231571e+308
+# min_float;;
+- : float = 2.22507385850720138e-308
+```
+
+## Medir tiempos de ejecución:
+
+La funcion `Sys.time`, devuelve lo que el sistema operativo dice que lleva consumido este proceso de CPU en segundos.
+
+Nota: `Sys.time no es funcional`, no es una función es una pseudofunción, es imperactivo.
+
+```ocaml
+# Sys.time;;
+- : unit -> float = <fun>
+Sys.time ();;
+- : float = 81.111392
+```
+
+Sabiendo esto, para meder tiempos de ejecución:
+
+1. Llamas a `Sys.time`.
+
+2. Ejecutas el código.
+
+3. Vuelve a llamar a `sys.time`.
+
+4. Restas las 2 mediciones.
+
+Una función para automatizarlo:
+
+```ocaml
+# (* Función automatizada para medir el tiempo de una función *)
+  let crono f x = 
+      let t = Sys.time () in
+      let _ = f x in
+      Sys.time () -. t;;
+val crono : ('a -> 'b) -> 'a -> float = <fun>
+```
+Ejemplo de uso:
+
+```ocaml
+# crono fib 40;;
+- : float = 3.32622699999998872
+```
+
+Si la función recibe 2 argumentos:
+
+```ocaml
+# (* Función automatizada para medir el tiempo de una función que tome 2 argumentos *)
+  let crono2 f x y = 
+      let t = Sys.time () in
+      let _ = f x y in
+      Sys.time () -. t;;
+val crono2 : ('a -> 'b -> 'c) -> 'a -> 'b -> float = <fun>
+```
+
+Ejemplo de uso:
+
+```ocaml
+# crono2 rem 1000000000 2;;
+- : float = 7.03057200000000648
+```
+
+## TIPS 
+
+En ocaml se puede poner _ entre números para marcal el . y leer más facil, ej: 1_000_000 un millon.
+
+```ocaml
+# 1_000_000;;
+- : int = 1000000
+```
 
