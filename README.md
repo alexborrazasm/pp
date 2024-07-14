@@ -762,7 +762,7 @@ Para devolver el primer tipo de dato, 'a. Recordemos:
 - : 'a * 'b -> 'a = <fun>
 ```
 
-### Otro uso de lps pares
+### Otro uso de los pares
 
 Para implementar operaciones que devuelven varios resultados necesitamos el producto cartesiano. Ejemplo:
 
