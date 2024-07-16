@@ -995,7 +995,7 @@ En la otra versión fib 80 lo acabaríamos abortando del tiempo que llevaba.
 
 No, dado que la última operación que hace no es la llamada recursiva, lo cual en este caso no importa, dado que con fib de 90 nos pasamos de [max_int](#límites-de-precisión-ocaml).
 
-### Hacer una función recursiva terminal:
+### Hacer una función recursiva terminal
 
 Cuando una recursivida no es termnial, puede dar el error de `stack overflow`. Esto el debido a que cada llamada de la función deja en la pila las operaciones pendientes.
 
@@ -1017,6 +1017,39 @@ val fib' : int -> int = <fun>
 ```
 
 Ahora la última operación es la llamada recursiva  `else aux (i + 1, f + a, f)`, por lo tanto `nunca` vamos a temer `stack overflow` por muchas llamadas que haga la función.
+
+## Listas
+
+Para cada valor de tipo `t`, tenemos tambien `t list`.
+
+¿Qué es un t list? Es una secuencias o listas finitas de valores de tipo t.
+
+### ¿Cómo es una lista en OCaml?
+
+```ocaml
+# [1;2;3];;                                     (* Lista de int *)
+- : int list = [1; 2; 3]
+# ['a';'b';'c'];;                               (* Lista de char *)
+- : char list = ['a'; 'b'; 'c']
+# [1.2;1.4;6.];;                                (* Lista de float *)
+- : float list = [1.2; 1.4; 6.]
+# ["Hola";" ";"Mundo!"];;                       (* Lista de string *)
+- : string list = ["Hola"; " "; "Mundo!"]
+# [1,4;4,5];;                                   (* Lista de pares de int *)
+- : (int * int) list = [(1, 4); (4, 5)]
+# [1, 'A'; 2, 'B'];;                            (* Lista de pares, un int y un char *)
+- : (int * char) list = [(1, 'A'); (2, 'B')]
+# [];;                                          (* Lista vacía *)
+- : 'a list = []
+```
+
+Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funciones que manejen listas.
+
+### Funciones para manejar listas
+
+
+
+
 
 
 
