@@ -1,28 +1,3 @@
-Como descompongo un t list para trabajar con las componentes?
-
-funciones predefinidas para trabajar por ellas:
-# List.hd;;
-- : 'a list -> 'a = <fun>
-
-devuelve la cabeza de la lista, el primer elemento
-
-# List.tl;;
-- : 'a list -> 'a list = <fun>
-
-devuelve una lista igual a la que le pasamos pero quita la cabeza de la original.
-
-Con estñas 2 funciones pudes hacer lo que queira con una lista.
-
-No son como las listas en c, el tipado de ocaml es fijo, los valores son inmutables, no puedes "insertar" valores en listas.
-
-# let l = [2,5];;
-val l : (int * int) list = [(2, 5)]
-
-Operadores de las listas:
-@
-
-# l @ l;;
-- : (int * int) list = [(2, 5); (2, 5)]
 
 vamos a empezar por una más fácil.
 

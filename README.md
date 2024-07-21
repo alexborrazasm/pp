@@ -1047,6 +1047,49 @@ Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funci
 
 ### Funciones para manejar listas
 
+Algunas funciones predefinidas para trabajar con listas en el módulo List.
+
+#### ¿Como descompongo un t list para trabajar con sus componentes?
+
+```ocaml
+# List.hd;;
+- : 'a list -> 'a = <fun>
+```
+
+Devuelve la cabeza de la lista (head), es decir el primer elemento.
+
+```ocaml
+# List.tl;;
+- : 'a list -> 'a list = <fun>
+```
+
+Devuelve una lista igual a la original pero sin la cabeza. La cola (tail).
+
+Con estas 2 funciones en OCaml se pueden hacer funciones para hacer lo que queramos con una lista.
+
+`Nota`: Una lista en `OCaml no es como las listas en C`, el tipado de ocaml es fijo, los valores son inmutables, no puedes `insertar` valores en listas.
+
+### Operadores de las listas:
+
+```ocaml
+# (@);;
+- : 'a list -> 'a list -> 'a list = <fun>
+# let l = [1,2];;                    (* Nombramos l, como una lista para de enteros *)
+val l : (int * int) list = [(1, 2)]
+# l @ l;;
+- : (int * int) list = [(1, 2); (1, 2)]
+# l @ [1,3];;
+- : (int * int) list = [(1, 2); (1, 3)]
+```
+
+Como vemos el operador @ nos devuelve una lista concatenada con otra.
+
+Es equivalente a usar la función `List.append`:
+
+```ocaml
+# List.append l [1,3];;
+- : (int * int) list = [(1, 2); (1, 3)]
+```
 
 
 
