@@ -1043,7 +1043,7 @@ Para cada valor de tipo `t`, tenemos tambien `t list`.
 - : 'a list = []
 ```
 
-Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funciones que manejen listas.
+Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funciones que manejen listas. Además las listas tienen `naturaleza recursiva`, es decir, una lista o es lista vacia o tiene una cabeza y una cola.
 
 ### Funciones para manejar listas
 
@@ -1091,7 +1091,97 @@ Es equivalente a usar la función `List.append`:
 - : (int * int) list = [(1, 2); (1, 3)]
 ```
 
+### Contrucción de funciones para manejar listas
 
+Definir length, nos devuelve en número de elemenos de una lista, su longitud, será del tipo 'a list -> int.
+
+```ocaml
+# let rec length l = 
+    if l = [] then 0 (* Caso base *)
+    else 1 + length (List.tl l) (* La llamada recursiva *)
+  ;;
+val length : 'a list -> int = <fun>
+```
+
+Last, nos devuelve el último elemento de una lista, del tipo 'a list -> 'a.
+
+```ocaml
+# let rec last l =
+    if List.tl l = [] then List.hd l
+    else last (List.tl l)
+  ;;
+val last : 'a list -> 'a = <fun>
+```
+
+#### La función lenght, en lugar de usar `if-then-else`, se puede construir con [Pattern Matching](#el-pattern-matching):
+
+```ocaml
+# let rec length l = 
+    match l with
+    | [] -> 0 (* Caso base *)
+    | _  -> 1 + length (List.tl l) (* La llamada recursiva *)
+  ;;
+val length : 'a list -> int = <fun>
+```
+
+Una función para comparar la longitud de 2 listas, como vemos se puede usar una función anónima con[Pattern Matching](#el-pattern-matching):
+
+```ocaml
+# let rec compare_lengths l1 l2 =
+  (function
+      [], [] -> 0
+    | [], _  -> -1
+    |  _, [] -> 1
+    | _::t1, _::t2 -> compare_lengths t1 t2) (l1, l2)
+  ;;
+val compare_lengths : 'a list -> 'b list -> int = <fun>
+```
+
+Podemos definir el append que tenemos en el módulo list a partir del [Pattern Matching](#el-pattern-matching):
+
+```ocaml
+# let rec append l1 l2 = match l1 with 
+    [] -> l2                      (* Si l1 es vacia *)
+  | h::t -> h :: append t l2      (* Si no es vacia *)
+  ;;
+val append : 'a list -> 'a list -> 'a list = <fun>
+```
+
+Como vemos el append, que está así definido en el módulo List de OCaml, no es [recursivo terminal](#recursividad-terminal), tenemos el List.rev_append que si lo es. Vamos a definirlo:
+
+```ocaml
+# let rec rev_append l1 l2 = match l1 with
+      [] -> l2
+    | h::t -> rev_append t (h::l2)
+  ;;
+val rev_append : 'a list -> 'a list -> 'a list = <fun>
+```
+
+COmo vemos es una función reculsiva terminal, es más natural el rev_append que el append por como está construidas las listas en Ocaml.
+
+Podemos definir List.rev a partir del rev_append, dado que es un caso particular.
+
+```ocaml
+# let rev l = rev_append l []
+  ;;
+val rev : 'a list -> 'a list = <fun>
+```
+
+Ahora podríamos hacer un append recursivo terminal:
+
+```ocaml
+# let append' l1 l2 = rev_append (rev l1) l2
+  ;;
+val append' : 'a list -> 'a list -> 'a list = <fun>
+```
+
+#### Como curiosidad:
+
+A partir de la versión 5 de Ocaml la append es terminal, en las anterior no lo era por lo lentas que eran las máquinas en su momento.
+
+La no terminalidad de append tiene una particularidad, lo que deja pendiente es el contructor, son terminales salvo por el contructor es constructor no es una "operación" como tal, si al compilador se lo pides puede compilar función así como terminal. Que es lo que han hecho en la versión 5 de ocaml.
+
+## Los errores de ejecución
 
 
 
@@ -1185,6 +1275,32 @@ Ejemplo de uso:
 # crono2 rem 1000000000 2;;
 - : float = 7.03057200000000648
 ```
+
+## El Pattern Matching
+
+El pattern matching consiste en comparar una expresión contra varios patrones hasta encontrar uno que coincida. Cada patrón puede desestructurar la expresión y enlazar partes de ella a variables. Si se encuentra un patrón coincidente, se ejecuta el código asociado a ese patrón. Como veremos más adelante es muy cómodo, por ejemplo para definir funciones para manejar las listas vistas arriba.
+
+### Sintaxis básica
+
+```ocaml
+match expresión with
+| patrón1 -> acción1
+| patrón2 -> acción2
+| ...
+| patrónN -> acciónN
+```
+
+#### Un ejemplo con listas:
+
+```ocaml
+let describe_list lst =
+  match lst with
+  | [] -> "La lista está vacía"
+  | [x] -> "La lista tiene un solo elemento"
+  | x :: y :: _ -> "La lista tiene más de un elemento"
+```
+
+El patrón `[]`, representa la `lista vacía`, el `[x]` es la lista con `un solo elemento` y por último `x :: y :: _` es `cualquier otra` lista.
 
 ## TIPS 
 
