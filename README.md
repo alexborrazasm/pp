@@ -1183,6 +1183,236 @@ La no terminalidad de append tiene una particularidad, lo que deja pendiente es 
 
 ## Los errores de ejecución
 
+Un error de ejecución en OCaml es un error que ocurre mientras el programa está siendo ejecutado, en contraste con los errores de compilación, que se detectan antes de que el programa sea ejecutado. Algunos ejemplos:
+
+```ocaml
+# 5 / 0;;
+Exception: Division_by_zero.
+```
+
+```ocaml
+# List.hd [];;
+Exception: Failure "hd".
+```
+
+No puede devolver la cabeza de una lista vacia.
+
+```ocaml
+# List.tl [];;
+Exception: Failure "tl".
+```
+
+Pasa lo mismo con la cola.
+
+`List.nth`nos devuelve el elemento de la posición que le pidamos de una lista, que pasa si la aplicamos a un elemento que no existe:
+
+```ocaml
+# List.nth;;
+- : 'a list -> int -> 'a = <fun>
+# List.nth [5; 4] 1;;  (* Pedimos la posición 1 de la lista *)
+- : int = 4
+# List.nth [5; 4] 3;;  (* Pedimos la posición 3 de la lista *)
+Exception: Failure "nth".
+```
+
+Error de ejecución. Y si accedemos a uno que no tiene sentido:
+
+```ocaml
+# List.nth [5; 4] (-1);;
+Exception: Invalid_argument "List.nth".
+```
+
+Error de ejecución, pero distinto.
+
+### ¿Qué es esto de `Exception`?
+
+```ocaml
+# Division_by_zero;;
+- : exn = Division_by_zero
+```
+
+Un nuevo tipo de dato, `exn`.
+
+```ocaml
+# Failure;;
+Error: The constructor Failure expects 1 argument(s),
+       but is applied here to 0 argument(s)
+```
+
+¿Cómo que un constructor?
+
+Entonces:
+
+```ocaml
+# Failure "menudo error!";;
+- : exn = Failure "menudo error!"
+```
+
+### ¿Cómo hacemos para que nuestras funciones también den errores de ejecución?
+
+Vamos a definir hd:
+
+```ocaml
+# let hd = function h::_ -> h;;
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[]
+val hd : 'a list -> 'a = <fun>
+```
+
+Nos da una abvertencia de match, dado que me he dajado la lista vacía.
+
+```ocaml
+# hd [];;
+Exception: Match_failure ("//toplevel//", 1, 9).
+```
+
+¿Y como hacemos ese error, como en la función del módulo List?
+
+La función `raise`:
+
+```ocaml
+# raise;;
+- : exn -> 'a = <fun>
+```
+
+Es una función de un error a cualquier cosa, que quiere decir, que nunca devuelve nada.
+
+```ocaml
+# raise Division_by_zero;;
+Exception: Division_by_zero.
+```
+
+No devuleve nada si no que imprime el error y termina la ejecución.
+
+Ahora que sabemos todo esto, vamos a hacerlo bien:
+
+```ocaml
+# let hd = function 
+      [] -> raise (Failure "hd")      
+     | h::_ -> h
+  ;;
+val hd : 'a list -> 'a = <fun>
+# hd [];;
+Exception: Failure "hd"
+```
+
+## Los valores del tipo 'a option:
+
+Al igual que para cada tipo 'a hay un 'a list, también para cada tipo de datos 'a existe 'a option.
+
+Son muy útiles para manegar errores y no detener la ejecución del código.
+
+Tienen 2 constructores Nome y Some.
+
+```ocaml
+# None;;
+- : 'a option = None
+# Some 5;;
+- : int option = Some 5
+```
+
+Nota: Los contructores en Ocaml `SIEMPRE` empiezan por mayúscula, como vimos en los [errores](#los-errores-de-ejecución). El contuctor de los tipos exn `Failure` y ahora `Some` y `None`.
+
+Un ejemplo:
+
+`List.find` da error si no encuntra y `List.fin_opt` da None al fallar y un int option al estar bien.
+
+Vamos a definir un par de valores para trabajar
+```ocaml
+# let par = fun x -> x mod 2 = 0;;
+val par : int -> bool = <fun>
+# let l = [1;3;3;5];;
+val l1 : int list = [1; 3; 3; 5]
+# let l2 = [1;2;3;5];;
+val l2 : int list = [1; 2; 3; 5]
+```
+
+Bien, ahora vamos a definar un función que imprima si es par:
+
+Sin usar int option
+
+```ocaml
+# let print_first_even l =
+        print_endline (string_of_int (List.find par l));;
+val print_first_even : int list -> unit = <fun>
+# print_first_even l1;;
+Exception: Not_found.
+# print_first_even l2;;
+2
+- : unit = ()
+```
+Como vemos cuando no encuntra un par, dun error de ejecución, lo cual nos pararía el programa. Pero si usamos `List.fin_opt` no va a petar, en algún caso nos puede interesar. Vamos usar `List.fin_opt`  y [pattern maching](#el-pattern-matching):
+
+```ocaml
+# let print_first_even l =
+    match List.find_opt par l with
+        None -> print_endline "Ningún par"
+      | Some n -> print_endline (string_of_int n)
+  ;;
+val print_first_even : int list -> unit = <fun>
+```
+
+Como funciona:
+
+``` ocaml
+# print_first_even l1;;
+Ningún par
+- : unit = ()
+# print_first_even l2;;
+2
+- : unit = ()
+```
+
+En está última implementación no se termina el programa.
+
+## Interceptar errores
+
+A parte de utilizar 'a opt para no parar la ejecución de un código tenemos otro mecanismo.
+
+En esta función:
+
+```ocaml
+let queens n =
+  let rec completar path i j =
+    if i > n then Some path   (* Hemos terminado *)
+    else if j > n then None   (* No se puede completar *)
+    else if compatible (i,j) path
+      then match completar path ((i,j)::path) (i+1) 1 with
+          None -> completar path i (j+1)
+        | Some sol -> Some sol
+    else completar oath i (j+1)
+    in completar [] 1 1;;
+```
+
+En lugar de `Some` y `None`, se puede utilizar `try ____ with`:
+
+```ocaml
+let queens n =
+  let rec completar path i j =
+    if i > n then path                   (* Hemos terminado *)
+    else if j > n then raise Not_found   (* No se puede completar *)
+    else if compatible (i,j) path 
+      then try completar ((i,j)::path) (i+1) 1 with
+        | Not_found -> completar path i (j+1)
+    else completar path i (j+1)
+  in completar [] 1 1;;
+(* try ____ with, se evalua lo que hay en la mitad, si da fallo hace lo que le digamos*)
+```
+
+Como es una try with en general:
+
+```
+try <e> with 
+    <p1> -> <e1>
+  | <p2> -> <e2>
+  | ...
+```
+
+Si `<e>` no da fallo no pasa nada, si lo da, hace patern maching con lo que tiene a continuación. Y el error de interceptaria en lugar de detenerse el código.
+
+
+
 
 
 
@@ -1311,3 +1541,67 @@ En ocaml se puede poner _ entre números para marcal el . y leer más facil, ej:
 - : int = 1000000
 ```
 
+## Número aleatorios
+
+El módulo `Ramdom`. Algunas funciones:
+
+1. Random.int int: Genera un número entero aleatorio entre 0 (inclusive) y el entero proporcionado (exclusivo).
+
+2. Random.float float: Genera un número de punto flotante aleatorio entre 0.0 (inclusive) y el flotante proporcionado (exclusivo).
+
+3. Random.bool (): Genera un valor booleano aleatorio (true o false).
+
+```ocmal
+# Random.int;;
+- : int -> int = <fun>
+# Random.int;;
+- : int -> int = <fun>
+# Random.int 10;;
+- : int = 4
+# Random.int 10;;
+- : int = 5
+# Random.int 10;;
+- : int = 2
+# Random.int 10;;
+- : int = 1
+```
+
+Tip: Generar una lista aleatoria.
+
+```ocaml
+# let list = List.init 100_000 (fun _ -> Random.int 400_000);;
+val list : int list =
+  [180439; 307500; 344104; 7020; 219921; 278370; 155217; 226885; 95949;
+   98678; 3615; 344412; 62401; 218606; 233428; 392869; 7289; 86393; 334014;
+   33423; 143723; 256544; 154096; 124803; 248500; 373570; 139649; 193212;
+   244755; 166211; 320357; 51197; 153897; 266460; 262183; 397763; 244720;
+   163599; 296559; 339970; 156884; 149243; 195220; 195546; 208954; 345518;
+   238988; 243358; 20424; 219051; 202309; 353069; 41376; 334286; 156438;
+   287122; 139265; 341952; 58419; 64683; 302782; 333740; 136270; 249835;
+   365136; 265791; 342168; 165324; 382222; 388156; 332835; 22328; 235636;
+   129233; 87153; 352671; 202069; 393095; 226357; 127092; 50824; 200146;
+   146278; 286133; 358688; 334989; 338295; 293158; 208393; 320601; 62456;
+   147513; 97329; 291013; 48000; 122017; 273186; 395571; 219024; 49348;
+   191836; 30011; 265671; 114232; 206465; 147649; 163931; 243450; 185569;
+   240958; 14212; 48283; 142101; 204696; 350809; 261461; 268721; 332729;
+   1181; 31697; 186383; 262776; 312830; 337731; 279154; 239039; 2524; 108814;
+   124789; 306167; 260168; 393887; 281299; 92026; 241321; 115476; 347793;
+   168395; 387768; 144263; 175962; 210673; 199636; 208677; 125298; 271423;
+   267140; 224211; 223738; 307376; 11920; 59570; 258355; 390037; 387088;
+   70990; 127210; 268207; 223051; 189443; 312004; 24095; 95493; 325061;
+   191157; 255532; 163753; 89892; 373082; 196731; 263883; 302853; 143407;
+   58965; 240360; 169845; 392366; 38117; 161951; 361054; 146400; 14445;
+   26566; 241313; 154367; 247260; 323031; 8518; 218383; 322542; 304929;
+   259811; 192487; 83268; 69347; 367106; 66207; 221570; 298569; 356546;
+   68129; 131022; 385251; 367136; 366356; 110441; 229425; 108890; 28152;
+   7207; 32054; 273610; 140838; 107802; 288938; 66380; 129514; 276718;
+   333580; 9540; 178091; 326866; 207891; 23720; 279997; 191396; 128153;
+   209605; 280542; 397124; 126388; 318687; 169136; 147173; 328188; 370963;
+   124904; 256000; 208404; 182515; 112616; 213264; 140320; 359236; 30334;
+   193886; 184391; 180188; 360012; 261130; 234846; 102454; 148438; 364655;
+   238460; 206327; 322432; 113404; 34938; 105067; 107569; 213979; 27572;
+   55462; 12566; 218411; 102760; 123927; 221971; 97347; 107061; 100301;
+   89982; 332095; 226969; 66613; 378941; 392294; 203925; 98156; 52534;
+   362992; 170254; 287140; 361787; 223014; 383178; 349737; 118772; 221285;
+   334197; 90671; 328186; 94162; 237959; 383377; 31681; 101271; 83189; ...]
+```
