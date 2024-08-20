@@ -505,7 +505,24 @@ El nombre ahí es code, y el Char es un módulo, dentro de ese módulo hay un de
 
 No siempre es necesario especificar el módulo, por que las que estan en Stdlib el compilador las detecta automaticamente.
 
-Para el resto Módulo.Nombre.
+Para el resto Modulo.Nombre.
+
+Como se carga un módulo nuestro:
+```ocmal
+#load "modulo.cmo";;
+```
+Si no queremos poner Modulo.nombre puedo hacer:
+
+```ocaml
+open Modulo;;
+```
+Ejemplo:
+
+```ocaml
+# open Char;;
+# code;;
+- : char -> int = <fun>
+```
 
 ## Funciones de funciones
 
@@ -1124,7 +1141,7 @@ val last : 'a list -> 'a = <fun>
 val length : 'a list -> int = <fun>
 ```
 
-Una función para comparar la longitud de 2 listas, como vemos se puede usar una función anónima con[Pattern Matching](#el-pattern-matching):
+Una función para comparar la longitud de 2 listas, como vemos se puede usar una función anónima con [Pattern Matching](#el-pattern-matching):
 
 ```ocaml
 # let rec compare_lengths l1 l2 =
@@ -1402,7 +1419,7 @@ let queens n =
 
 Como es una try with en general:
 
-```
+```ocaml
 try <e> with 
     <p1> -> <e1>
   | <p2> -> <e2>
@@ -1410,6 +1427,501 @@ try <e> with
 ```
 
 Si `<e>` no da fallo no pasa nada, si lo da, hace patern maching con lo que tiene a continuación. Y el error de interceptaria en lugar de detenerse el código.
+
+## Definir  tipos de datos
+
+Para definir un tipo de datos en Ocaml se empieza por la palabra reservada type.
+
+Por ejemplo:
+
+```ocaml
+type numero = I of int | F of float;;
+```
+ 
+Hemos definido 2 contructores, I que nos convierte un int en un número y F que nos convierte un float en un número.
+
+```ocaml
+# I 4;;
+- : numero = I 4
+# F 2.4;;
+- : numero = F 2.4
+# [I 3; F 2.3; I 5];;
+- : numero list = [I 3; F 2.3; I 5]
+```
+
+Con el tipo de dato `numero` y patern maching, podríamos hacer una funciones que diferenciaran los enteros: 
+
+```ocmal
+# let is_int = function  (* Es un entero? *)
+      I _ -> true | _ -> false
+  ;;
+val is_int : numero -> bool = <fun>
+# let rec first_int = function (* Devuelve el primer entero de una lista de números *)
+      [] -> raise Not_found
+    | I n :: _ -> n
+    | _ :: t -> first_int t
+  ;;
+val first_int : numero list -> int = <fun>
+```
+
+### Vamos con más ejemplos:
+
+`Otro int`:
+
+```ocmal
+# type otroint = Otro of int;;
+type otroint = Otro of int
+# Otro 1;;
+- : otroint = Otro 1
+# Otro 5;;
+- : otroint = Otro 5
+# Otro 7;;
+- : otroint = Otro 7
+# Otro 7.1;;
+Error: This expression has type float but an expression was expected of type
+         int
+```
+
+`dobleint`:
+
+```ocaml
+# type dobleint = R of int | L of int;;
+type dobleint = R of int | L of int
+# R 5;;
+- : dobleint = R 5
+# L 5;;
+- : dobleint = L 5
+# R 10;;
+- : dobleint = R 10
+# L 10;;
+- : dobleint = L 10
+# L 10 = R 10;;
+- : bool = false
+(* No son iguales dado que no están construidos con el mismo contructor *)
+```
+
+Si no existieran los int option, podría implementarlos:
+
+```ocaml
+# type intplus = Int of int | Na;;
+type intplus = Int of int | Na
+(* Int es un constructor varaible y Na constante *)
+# Na;;
+- : intplus = Na
+# Int 4;;
+- : intplus = Int 4
+# Int 10;;
+- : intplus = Int 10
+```
+
+Uso esta definición en el [anexo](#como-llamar-una-función-con-un-simbolo), como usar `<e1> / <e2>` en lugar de `func <e1> <e2>`.
+
+Podría definir los booleanos:
+
+```ocaml
+# type boolean = True | False;;
+type boolean = True | False
+# let no = function
+      True -> False
+    | False -> True
+  ;;
+val no : boolean -> boolean = <fun>
+(* Podriamos definirlo como en C *)
+# let (!) = function
+      True -> False
+    | False -> True;;
+val ( ! ) : boolean -> boolean = <fun>
+# no True;;
+- : boolean = False
+# !True;;
+- : boolean = False
+```
+
+Otro ejemplo:
+
+```ocaml
+# type palo = Diamante | Corazon | Trebol | Pica;;
+type palo = Diamante | Corazon | Trebol | Pica
+# let es_rojo = function
+      Corazon | Diamante -> True
+    | _ -> False
+  ;;
+val es_rojo : palo -> boolean = <fun>
+# let es_negro p = ! (es_rojo p);; (* ! definida arriba *)
+val es_negro : palo -> boolean = <fun>
+```
+
+Ejemplo de definición recursiva:
+
+```ocaml
+# type nat = One | Succ of nat;;  (* Es una definición reculsiva *)
+type nat = One | Succ of nat
+# One;;
+- : nat = One
+# Succ One;;
+- : nat = Succ One
+# Succ (Succ One);;
+- : nat = Succ (Succ One)
+# let rec nat_of_int = function
+    n when n < 0->  raise (Invalid_argument "nat_of_int")
+  | 1 -> One
+  | n -> Succ (nat_of_int (n-1))
+  ;;
+val nat_of_int : int -> nat = <fun>
+# nat_of_int (-1);;
+Exception: Invalid_argument "nat_of_int".
+# nat_of_int 0;;
+Exception: Invalid_argument "nat_of_int".
+# nat_of_int (10);;
+- : nat = Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ (Succ One))))))))
+```
+
+Otro ejemplo con 3 constructores:
+
+```ocaml
+# type entero = Pos of nat | Neg of nat | Zero;;
+type entero = Pos of nat | Neg of nat | Zer
+# let absoluto = function
+      Neg n -> Pos n
+    | e -> e;;
+val absoluto : entero -> entero = <fun>
+# let opuesto = function
+      Zero -> Zero
+    | Pos n -> Neg n
+    | Neg n -> Pos n;;
+val opuesto : entero -> entero = <fun>
+# let entero_of_int = function
+      0 -> Zero
+    | n -> if n > 0 then Pos (nat_of_int n)
+           else Neg (nat_of_int (-n));;
+val entero_of_int : int -> entero = <fun>
+```
+
+Ejemplo de definición polimórfica:
+
+```ocaml
+# type 'a option = None | Some of 'a;; (* Tipo polimórfico *)
+type 'a option = None | Some of 'a
+```
+option no es un tipo, es un contructor de tipos.
+
+Así están definidos en OCaml los 'a option.
+
+Definir las listas:
+
+```ocaml
+# type 'a lista = Vacia | Cons of 'a * 'a lista;;
+type 'a lista = Vacia | Cons of 'a * 'a lista
+# Vacia;;
+- : 'a lista = Vacia
+# Cons (3, Vacia);;
+- : int lista = Cons (3, Vacia)
+# Cons (2,Vacia);;
+- : int lista = Cons (2, Vacia)
+# let l3 = Cons (3, Vacia);;
+val l3 : int lista = Cons (3, Vacia)
+# let l33 = Cons (3, l3);;
+val l33 : int lista = Cons (3, Cons (3, Vacia))
+```
+
+## Árboles binarios
+
+No vienen definidos en OCaml.
+
+Las listas son arboles unarios, con solo una rama.
+
+Definición:
+
+```ocaml
+# type 'a bintree =
+      Empty 
+    | Node of 'a * 'a bintree * 'a bintree;;
+type 'a bintree = Empty | Node of 'a * 'a bintree * 'a bintree
+```
+
+Algunas funciones:
+
+```ocaml
+let rec nnodos = function (* Número de nodos *)
+    Empty -> 0
+  | Node (_,i,d) -> 1 + nnodos i + nnodos d;;
+
+let rec altura = function
+    Empty -> 0
+  | Node (_, i, d) -> 1 + max (altura i) (altura d);;
+```
+
+El la `práctica 9`, hay más ejemplos de árboles binarios.
+
+## La parte imperactica de OCaml
+
+Hasta el momento solo usamos la parte funcional de OCaml, pero como es un lenguaje multiparadigma, tambien tiene el paradigma imperactivo, como C.
+
+El operador `;` en OCaml se usa para ejecutar una expresión y luego ejecutar otra, ignorando el resultado de la primera. Esto es útil cuando tienes varias expresiones que deben ejecutarse en secuencia y solo te importa el resultado de la última.
+
+Ejemplo:
+
+```ocaml
+# print_endline "Hola, mundo!"
+  print_endline "Esto es OCaml!"
+  ;;
+Error: This function has type string -> unit
+       It is applied to too many arguments; maybe you forgot a `;'.
+```
+
+Con `;`:
+
+```ocaml
+# print_endline "Hola, mundo!";
+  print_endline "Esto es OCaml!"
+  ;;
+Hola, mundo!
+Esto es OCaml!
+- : unit = ()
+```
+
+Aquí, las dos expresiones de impresión se ejecutan secuencialmente. El ; indica que la primera expresión debe evaluarse (y su resultado se ignora), y luego se evalúa la segunda expresión.
+
+### Variables
+
+Como definir una 'variable', es decir un valor mutable:
+
+```ocaml
+# let x = ref 5;;
+val x : int ref = {contents = 5}
+# x := 6;;  (* Cambia el valor al que apunta x *)
+- : unit = ()
+# x;;
+- : int ref = {contents = 6}
+# !x;; (* !variable, para ver el valor *)
+- : int = 6
+```
+
+### Switch
+
+Los switch, se pueden hacer con el `match <e>` que vimos anteriormente.
+
+### Los bucles
+
+#### Bucle while:
+
+```ocaml
+while <b> do <e> done (* <b> bool *)
+```
+Cuando es false daria un `unit` y si no evalua `<e>`.
+
+#### Bucle for:
+
+```ocaml
+for <i> = <i1> to <i2> (* Ascendente *)
+  do <e> done
+
+for <i> = <i1> down to <i2> (* Descendente *)
+  do <e> done
+```
+
+Ejemplos con fact:
+
+Funcional:
+
+```ocaml
+# let rec fact n =  (* Recursivo *)
+    if n <= 0 then 1
+    else n * fact (n-1);;
+val fact : int -> int = <fun
+```
+
+```ocaml
+# let fact n =  (* Recursivo terminal *)
+    let rec aux (f,i) =
+      if i <= n then
+        aux (f * i, i + 1)
+      else f
+    in aux (1,1);;
+val fact : int -> int = <fun>
+```
+
+Bucle while:
+
+```ocaml
+# let fact n = 
+    let f = ref 1 in
+    let i = ref 1 in 
+    while !i <= n do
+      f:= !f * !i;
+      i := !i + 1
+    done;
+    !f;;
+val fact : int -> int = <fun>
+```
+
+Bucle for:
+
+```ocaml
+# let fact n =
+    let f = ref 1 in
+    for i = 1 to n do
+        f := !f * i
+    done;
+    !f;;
+val fact : int -> int = <fun>
+```
+
+Como vemos los bucles son más parecidos a una función recursiva terminal.
+
+### Los arrays
+
+```ocaml
+# let v = [|1; 10; 100|];;
+val v : int array = [|1; 10; 100|]
+```
+
+Diferecias con las listas:
+
+- Rendimiento, en a' array puedes acceder al elemento de cualquiera posición con coste constante, adiferencia de las listas.
+
+- Los array está numerados, de 0 a (n-1).
+
+- Tambien tenemos el módulo Array.
+
+```ocaml
+# Array.length;;
+- : 'a array -> int = <fun>
+# Array.get;;  (* Similar a nth pero co coste constante *)
+- : 'a array -> int -> 'a = <fun>
+```
+
+Array.get se abrevia con `v.(1);;`
+
+```ocaml
+# v.(1);;
+- : int = 10
+# v.(2);;
+- : int = 100
+# v.(0);;
+- : int = 1
+# v.(3);;
+Exception: Invalid_argument "index out of bounds".
+```
+
+Cambiar un valor del array:
+
+```ocaml
+# open Array;; (* Para dejar de poner Array.nombre *)
+# set v 2 (v.(1) + 2* v.(2));;
+- : unit = ()
+# v;;
+- : int array = [|1; 10; 210|]
+```
+
+Devuelve unit, pero no nos importa lo que devuelva, lo importante es que cambia v.
+
+Set tambien se puede abreviar:
+
+```ocaml
+# v.(2) <- v.(1) + 2 * v.(2);; (* Set abreviado <- *)
+- : unit = ()
+# v;;
+- : int array = [|1; 10; 430|]
+```
+
+Array.init y Array.make:
+
+```ocaml
+# Array.init 20 succ;;
+- : int array =
+[|1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16; 17; 18; 19; 20|]
+# Array.make 10 'a';;
+- : char array = [|'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'; 'a'|]
+```
+
+Al igual que List.init y List.make.
+
+`Array.copy` hace una copia del array en ese momento.
+
+## Registros de datos en OCaml
+
+```ocaml
+# type person = {name : string; age : int};;
+type person = { name : string; age : int; }
+```
+
+person es un reguistro de datos, un struct en C.
+
+Tiene 2 componentes un string y un int por lo tanto es un registro de 2 campos.
+
+Se puede hacer patern maching en los registros:
+
+```ocaml
+let order p =
+  {name = p.name; age = p.age + 1};;
+```
+
+```ocaml
+# let older {name = n; age = a} =
+    {name = n; age = a + 1};;
+val older : person -> person = <fun>
+```
+
+### Puedo hacer otra definición de los registros:
+
+```ocaml
+# type person = {name : string; mutable age : int}
+  ;;
+type person = { name : string; mutable age : int; }
+# let p2 : person = {name = "Marta"; age = 18}
+  ;;
+val p2 : person = {name = "Marta"; age = 18}
+```
+
+Cómo modifico el valor mutable? Y como lo veo?
+
+```ocaml
+# p2.age <- 28;; (* Cambio la edad *)
+- : unit = ()
+# p2;; (* Veo el contenido del struct *)
+- : person = {name = "Marta"; age = 28}
+```
+
+Otro ejemplo:
+
+```ocaml
+# type 'a var = {mutable valor : 'a}
+  ;;
+type 'a var = { mutable valor : 'a; }
+# {valor = 1}
+  ;;
+- : int var = {valor = 1}
+# {valor = "Hola"}
+  ;;
+- : string var = {valor = "Hola"}
+# let initvar x = {valor = x}
+  ;;
+val initvar : 'a -> 'a var = <fun>
+# initvar 10
+  ;;
+- : int var = {valor = 10}
+# initvar "Casa"
+  ;;
+- : string var = {valor = "Casa"}
+# let (!!) v = v.valor
+  ;;
+val ( !! ) : 'a var -> 'a = <fun>
+# let n = initvar 7
+  ;;
+val n : int var = {valor = 7}
+# !!n
+  ;;
+- : int = 7
+```
+
+Acabo de implementar las variables en OCaml, de hecho así están implementadas.
+
+## los functores
+
+¿Qué es un functor? Un functor es una función que devuelve un módulo.
+
+
 
 
 
@@ -1433,7 +1945,7 @@ Si `<e>` no da fallo no pasa nada, si lo da, hace patern maching con lo que tien
 
 # Anexo
 
-## Límites de precisión Ocaml:
+## Límites de precisión OCaml:
 
 El valor máximo y mínimo que pueden representar un int y un float, se puede consultar:
 
@@ -1604,4 +2116,34 @@ val list : int list =
    89982; 332095; 226969; 66613; 378941; 392294; 203925; 98156; 52534;
    362992; 170254; 287140; 361787; 223014; 383178; 349737; 118772; 221285;
    334197; 90671; 328186; 94162; 237959; 383377; 31681; 101271; 83189; ...]
+```
+
+## Como llamar una función con un simbolo
+
+Vamos a definir la división entera si que al dividir por 0 de error.
+
+```ocaml
+# type intplus = Int of int | Na;; (* Igual a int option *)
+type intplus = Int of int | Na
+# let div i1 i2 = match (i1,i2) with
+      (_, Int 0) -> Na
+    | (Int m, Int n) -> Int (m / n)
+    | _ -> Na  (* En cualquier otro caso *)
+  ;;   
+val div : intplus -> intplus -> intplus = <fun>
+```
+Como pasar de div i1 i2 a i1 // i2:
+
+```ocaml
+# let (//) = div;;
+val ( // ) : intplus -> intplus -> intplus = <fun>
+```
+
+Listo.
+
+```ocaml
+# Int 10 // Int 2;;
+- : intplus = Int 5
+# Int 10 // Int 0;;
+- : intplus = Na
 ```
