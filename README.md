@@ -2,9 +2,86 @@
 
 Repositorio de las prácticas en [OCaml](https://ocaml.org/).
 
+Este README tiene una parte inicial de como instalar [OCaml](#como-instalar-ocaml), luego una parte con un resumen de los [apuntes tomados en clase](#el-lenguaje-de-programación-ocaml) y un [anexo](#anexo).
+
 Nota prácticas final: 2.0/2.0.
 
-## ¿Como instalar OCaml?
+# Indice
+
+1. [Como instalar OCaml](#como-instalar-ocaml)
+   
+   1.1 [Configurar Visual Studio Code](#configurar-visual-studio-code)
+
+2. [Apuntes OCaml](#el-lenguaje-de-programación-ocaml)
+
+   2.1 [El compilador](#el-compilador)
+
+   2.2 [Comentarios](#comentarios)
+
+   2.3 [Tipos de datos](#tipos-de-datos-en-ocaml)
+
+   2.4 [Tipos Primitivos](#tipos-primitivos)
+
+   2.5 [Operaciones con Tipos Primitivos](#operaciones-con-tipos-primitivos)
+
+   2.6 [Conversiones de tipo](#conversiones-de-tipo)
+
+   2.7 [El tipo unit](#el-tipo-unit)
+
+   2.8 [Funciones](#funciones-en-ocaml)
+
+   2.9 [Funciones lamda](#funciones-lamda)
+
+   2.10 [Definiciones](#definiciones-en-ocaml)
+
+   2.11 [Evaluación de expresiones](#evaluación-de-expresiones)
+
+   2.12 [Librerias](#librerias-en-ocaml)
+
+   2.13 [Funciones de funciones](#funciones-de-funciones)
+
+   2.14 [Operadores Lógicos](#operadores-lógicos)
+
+   2.15 [if-then-else](#if-then-else)
+
+   2.16 [Tuplas de datos o pares](#tuplas-de-datos-o-pares)
+
+   2.17 [La Recursividad](#la-recursividad)
+
+   2.18 [Listas](#listas)
+
+   2.19 [Los errores de ejecución](#los-errores-de-ejecución)
+
+   2.20 [Los valores del tipo 'a option](#los-valores-del-tipo-a-option)
+
+   2.21 [Definir tipos de datos](#definir-tipos-de-datos)
+
+   2.22 [Árboles binarios](#árboles-binarios)
+
+   2.23 [La parte imperactiva de OCaml](#la-parte-imperactiva-de-ocaml)
+
+   2.24 [egistros de datos](#registros-de-datos-en-ocaml)
+
+   2.25 [Un contador](#un-contador)
+
+   2.26 [Objetos](#objetos-en-ocaml)
+
+3. [Anexo](#anexo)
+   
+   3.1 [Límites de precisión OCaml](#límites-de-precisión-ocaml)
+
+   3.2 [Medir tiempos de ejecución](#medir-tiempos-de-ejecución)
+
+   3.3 [El Pattern Matching](#el-pattern-matching)
+
+   3.4 [TIPS](#tips)
+
+   3.5 [Números aleatorios](#números-aleatorios)
+
+   3.6 [Llamar una función con un simbolo](#como-llamar-una-función-con-un-simbolo)
+
+
+# ¿Como instalar OCaml?
 
 1. **Abrimos una terminal en linux**
     
@@ -12,17 +89,16 @@ Nota prácticas final: 2.0/2.0.
     ```bash
     sudo apt update 
     sudo apt upgrade
-    sudo apt install ocaml opam rlwrap 
+    sudo apt install ocaml opam rlwrap dune
     ```
     en Arch o derivadas:
     ```bash
-    sudo pacman -Syyu ocaml opam rlwrap
+    sudo pacman -Syyu ocaml opam rlwrap dune
     ```
     en Red Hat/CentOS/Fedora:
     ```bash
     sudo dnf upgrade
-    sudo dnf upgrade
-    sudo dnf install ocaml opam rlwrap
+    sudo dnf install ocaml opam rlwrap dune
     ```
 
 2. **El compilador interectivo**
@@ -471,7 +547,7 @@ Como veis x solo existe localmente:
 Error: Unbound value x
 ```
 
-## Evaluación en OCaml
+## Evaluación de expresiones
 
 OCaml utiliza una evaluación estricta (`eager`). Esto significa que las expresiones se evalúan completamente antes de ser pasadas como argumentos a funciones o asignadas a nombres. 
 
@@ -1428,7 +1504,7 @@ try <e> with
 
 Si `<e>` no da fallo no pasa nada, si lo da, hace patern maching con lo que tiene a continuación. Y el error de interceptaria en lugar de detenerse el código.
 
-## Definir  tipos de datos
+## Definir tipos de datos
 
 Para definir un tipo de datos en Ocaml se empieza por la palabra reservada type.
 
@@ -1653,7 +1729,7 @@ let rec altura = function
 
 El la `práctica 9`, hay más ejemplos de árboles binarios.
 
-## La parte imperactica de OCaml
+## La parte imperactiva de OCaml
 
 Hasta el momento solo usamos la parte funcional de OCaml, pero como es un lenguaje multiparadigma, tambien tiene el paradigma imperactivo, como C.
 
@@ -1917,31 +1993,391 @@ val n : int var = {valor = 7}
 
 Acabo de implementar las variables en OCaml, de hecho así están implementadas.
 
-## los functores
+## Un contador
+
+Vamos a ver como podemos hacer un contador:
+
+```ocaml
+let n = ref 0   (* Variable global *)
+
+let next () = 
+  n := !n + 1;  (* Suma 1 a la variable *)
+  !n            (* Muestra el valor *)
+
+let reset () =  
+  n := 0        (* Vuelve a 0 la variable *)
+```
+
+Ahora sin la variable global:
+
+```ocaml
+let next, reset =
+  let n = ref 0 in                  (* Variable *)
+  (function () -> n := !n + 1; !n), (* next *)
+  (function () -> n := 0);;         (* reset *)
+```
+
+Ahora, una manera de hacer implementar esto comodamente es usar un módulo con el contador.
+
+Todo este tiempo con ocamlc algo.ml -i algo.mli estabamos compilando módulos.
+
+Para cargarlos en el compilador interactivo `#load "counter.cmo";;`, entre comillas la ruta.
+
+¿Pero que pasa si queremos tener 2 contadores? ¿Tenemos que utilizar 2 módulos?
+
+Aquí es donde cobran sentido los functores. 
 
 ¿Qué es un functor? Un functor es una función que devuelve un módulo.
 
+Veamos un ejemplo en el compilador interactivo:
 
+```ocaml
+# module Contador () : sig
+    val next : unit -> int
+    val reset : unit -> unit
+  end = struct
+    let n = ref 0
+    let next () = 
+      n := !n + 1;
+      !n
+    let reset () =
+      n := 0
+  end
+  ;;
+module Contador :
+  functor () -> sig val next : unit -> int val reset : unit -> unit end
+```
 
+Ahora podría tener varios contadores.
 
+```ocaml
+# module Contador0 = Contador ();;
+module Contador0 : sig val next : unit -> int val reset : unit -> unit end
+# module Contador1 = Contador ();;
+module Contador1 : sig val next : unit -> int val reset : unit -> unit end
+# module Contador2 = Contador ();;
+module Contador2 : sig val next : unit -> int val reset : unit -> unit end
+```
 
+Como vemos tenemos 3 contadores:
 
+```ocaml
+# Contador1.next ();;
+- : int = 1
+# Contador2.next ();;
+- : int = 1
+# Contador0.next ();;
+- : int = 1
+# Contador0.next ();;
+- : int = 2
+# Contador0.reset ();;
+- : unit = ()
+# Contador0.next ();;
+- : int = 1
+# Contador1.next ();;
+- : int = 2
+``` 
 
+En OCaml hay muchos módulos que no son módulos, son functores que crean módulos.
 
+Esto también se podría implementar con registros o structs en C.
 
+```ocaml
+# type counter = {next : unit -> int ; reset: unit -> unit}
+  
+  let counter = 
+    let n = ref 0 in
+    {next = (function () -> incr n; !n); 
+     reset = (function () -> n := 0)}
+  ;;
+type counter = { next : unit -> int; reset : unit -> unit; }
+val counter : counter = {next = <fun>; reset = <fun>}
+```
 
+La función incr n, suma 1 a un int ref
 
+```ocaml
+# incr;;
+- : int ref -> unit = <fun>
+# let n = ref 0;;  (* Variable global *)
+val n : int ref = {contents = 0}
+# incr n;; (* n + 1 *)
+- : unit = ()
+# !n;;  (* Valor de n *)
+- : int = 1
+# incr n;; (* n + 1 *)
+- : unit = ()
+# !n;;  (* Valor de n *)
+- : int = 2
+```
 
+Volviendo al contador con registros:
 
+```ocaml
+# counter.next ();;
+- : int = 1
+# counter.next ();;
+- : int = 2
+# counter.reset ();;
+- : unit = ()
+# counter.next ();;
+- : int = 1
+# counter.next ();;
+- : int = 2
+```
 
+Vemos que también funciona. Los registros pueden funcionar como módulos.
 
+Y también podría hacer una función que devolviese un contador:
 
+```ocaml
+# let new_counter () =
+    let n = ref 0 in
+    {next = (function () -> incr n; !n); 
+     reset = (function () -> n := 0)};;
+val new_counter : unit -> counter = <fun>
+# let c = new_counter ();;
+val c : counter = {next = <fun>; reset = <fun>}
+# let cc = new_counter ();;
+val cc : counter = {next = <fun>; reset = <fun>}
+# c.next ();;
+- : int = 1
+# cc.next ();;
+- : int = 1
+```
 
+## Objetos en OCaml
 
+Como acabamos de ver en el apartado anterior, tanto los registros, como los módulos son muy versátiles en OCaml y pueden funcionan como objetos.
 
+Por este motivo los objeto no son muy utilizados en OCaml.
 
+Vamos a definoir un contador con objetos:
 
+```ocaml
+# let counter2 = object
+    val mutable n = 0
+    method next = n <- n + 1 ; n    (* Suma 1 *)
+    method reset = n <- 0           (* Resetea el contador a 0 *)
+  end;;
+val counter : < next : int; reset : unit > = <obj>
+```
 
+Vemos que tiene 2 métodos, next y reset.
+
+Estos métodos se invocan con nombre_del_objeto#metodo.
+
+```ocaml
+# counter#next;;
+- : int = 1
+# counter#next;;
+- : int = 2
+# counter#next;;
+- : int = 3
+# counter#reset;;
+- : unit = ()
+# counter#next;;
+- : int = 1
+# counter#next;;
+- : int = 2
+```
+
+`OJO!`
+
+```ocaml
+# counter#next + (counter#reset; 2 * counter#next);;
+- : int = 4
+```
+Valor de counter 2:
+
+3 + 1 * 2 = 5.
+
+No ha dado 5, ¿Y eso?
+
+Dado que se avalua primero la expresión de la derecha. Entonces:
+
+2*1 + 2 = 4.
+
+Mucho `OJO`
+
+Con objetos, a diferencia de los registros puedo hacer polimorfismo, es decir:
+
+```ocaml
+# let doble o = 2 * o#next;;
+val doble : < next : int; .. > -> int = <fun>
+```
+
+Cualquier objeto con un método next, se puede aplicar a esa función.
+
+```ocaml
+# counter#reset;;
+- : unit = ()
+# doble counter;;
+- : int = 2
+# doble counter;;
+- : int = 4
+```
+
+Ahora vamos a definir un objeto, diferente, pero con el método next:
+
+```ocaml
+# let counter' = object
+    val mutable n = 100
+    method next = n <- n + 2 ; n    (* Suma 1 *)
+  end;;
+val counter' : < next : int > = <obj>
+# doble counter';;
+- : int = 204
+# doble counter';;
+- : int = 208
+```
+
+Por lo tanto `counter` y `counter'` no son del mismo tipo, pero gracias al polimorfismo en objetos puedo aplicar la función `doble`.
+
+Está solo requiere que un obj tenga el método next de tipo int.
+
+Con reguistros solo podría pasar un solo tipo el no tener polimorfismo.
+
+### Crear varios objetos del mismo tipo:
+
+Como con los modulos y los registros puedo crear una función que me devuelva un nuevo contador:
+
+```ocaml
+# let new_counter () = object
+    val mutable n = 0
+    method next = n <- n + 1 ; n  (* Suma 1 *)
+    method reset = n <- 0         (* Resetea el contador a 0 *)
+  end;;
+val new_counter : unit -> < next : int; reset : unit > = <fun>
+# let c1 = new_counter ();;
+val c1 : < next : int; reset : unit > = <obj>
+# let c2 = new_counter ();;
+val c2 : < next : int; reset : unit > = <obj>
+# let c3 = new_counter ();;
+val c3 : < next : int; reset : unit > = <obj>
+```
+
+Los objetos c1, c2, c3 son del mismo tipo, de hecho podemos ponerlos en una lista.
+
+```ocaml
+# [c1;c2;c3];;
+- : < next : int; reset : unit > list = [<obj>; <obj>; <obj>]
+```
+
+### ¿Qué nos falta aquí? Las clases
+
+Normalmente en los lenjuages orientados a onjetos tenemos que definiar la clase antes que los objetos.
+
+Aquí puedo tener el objetos sin clase, pero tambien existen las clases, aunque como vemos podría vivir sin ellas.
+
+Las clases proporcionan la caracteristica de la herencia, con la función `new_counter` no tengo.
+
+Arriba tenia objetos inmediatos. ¿Cómo creo una clase?
+
+Una clase en sí, es "una receta para crear objetos".
+
+```ocaml
+# class new_counter = object
+    val mutable n = 0
+    method next = n <- n + 1 ; n    (* Suma 1 *)
+    method reset = n <- 0           (* Resetea el contador a 0 *)
+  end;;
+class new_counter :
+  object val mutable n : int method next : int method reset : unit end
+# let cc = new new_counter;;
+val cc : new_counter = <obj>
+```
+
+Cuando defino clases lo que estoy haciendo es definir un `alias`, para un tipo de objeto, ahora new_counter es el nombre de los objetos que tienen el metodo reset de tipo unit y next de tipo int:
+
+```ocaml
+# [c1;c2;c3;cc];;
+- : new_counter list = [<obj>; <obj>; <obj>; <obj>]
+```
+
+Vamos a hablar de la herencia:
+
+```ocaml
+# class counter = object
+    val mutable n = 0
+    method next = n <- n + 1 ; n    (* Suma 1 *)
+    method reset = n <- 0           (* Resetea el contador a 0 *)
+  end;;
+class counter :
+  object val mutable n : int method next : int method reset : unit end
+```
+
+```ocaml
+# class counter_with_set = object
+        inherit counter                   (* Todos los atributos de la clase counter *)
+        method set x = n <- x             (* Un método nuevo *)  
+  end;;
+class counter_with_set :
+  object
+    val mutable n : int
+    method next : int
+    method reset : unit
+    method set : int -> unit
+  end
+```
+
+Con 'inherit' heredamos de una clase anterior.
+
+La clase counter_with_set no seria igual al tipo counter, pero la podría restringir.
+
+```ocaml
+# let c = new counter_with_set;;
+val c : counter_with_set = <obj>
+# let cc = new counter;;
+val cc : counter = <obj>
+# [c;cc];;
+Error: This expression has type counter
+       but an expression was expected of type counter_with_set
+       The first object type has no method set
+```
+Ahora vamos a retringir `c`, de la clase `counter_with_set` a `counter`.
+
+```ocaml
+# [(c :> counter) ;cc];;
+- : counter list = [<obj>; <obj>]
+```
+
+Aunque en la lista se use como un `counter`, yo ouedo acceder al set y modificarlo.
+
+Al heredar se puede editar una clase, por ejemplo:
+
+```ocaml
+class counter_with_init ini = object (self)
+  inherit counter_with_set
+  method reset = (* n <- ini *)
+    self#set ini    (* Pasa el valor de ini *)
+  initializer (* n <- ini *) 
+    self#reset (* Se ejecuta al crear una instacia *)
+end;;
+```
+
+Un metodo permite una espacio de reculsibidad abierta:
+
+```ocaml
+class counter_with_init'n'fin ini fin = object (self)
+  inherit counter_with_init ini as super
+  method next = let next = super#next in
+    if next < fin then next
+    else (self#reset; super#next)
+end;;
+```
+
+Se podría hacer un contador con paso variable:
+
+```ocaml
+class counter_with_step = object (self)
+	inherit counter_with_init 0 as super
+	val mutable step = 0
+	method next = n <- n + step; n
+	method set_step s = step <- s
+	method reset = super#reset; self#set_step 1
+end;;
+```
 
 # Anexo
 
@@ -2053,7 +2489,7 @@ En ocaml se puede poner _ entre números para marcal el . y leer más facil, ej:
 - : int = 1000000
 ```
 
-## Número aleatorios
+## Números aleatorios
 
 El módulo `Ramdom`. Algunas funciones:
 
