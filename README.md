@@ -36,7 +36,7 @@ Nota prácticas final: 2.0/2.0.
 
    2.11 [Evaluación de expresiones](#evaluación-de-expresiones)
 
-   2.12 [Librerias](#librerias-en-ocaml)
+   2.12 [Librerías](#librerías-en-ocaml)
 
    2.13 [Funciones de funciones](#funciones-de-funciones)
 
@@ -44,7 +44,7 @@ Nota prácticas final: 2.0/2.0.
 
    2.15 [if-then-else](#if-then-else)
 
-   2.16 [Tuplas de datos o pares](#tuplas-de-datos-o-pares)
+   2.16 [Tuplas de datos o pares](#tupla-de-datos-o-pares)
 
    2.17 [La Recursividad](#la-recursividad)
 
@@ -58,9 +58,9 @@ Nota prácticas final: 2.0/2.0.
 
    2.22 [Árboles binarios](#árboles-binarios)
 
-   2.23 [La parte imperactiva de OCaml](#la-parte-imperactiva-de-ocaml)
+   2.23 [La parte imperativa de OCaml](#la-parte-imperativa-de-ocaml)
 
-   2.24 [egistros de datos](#registros-de-datos-en-ocaml)
+   2.24 [Registros de datos](#registros-de-datos-en-ocaml)
 
    2.25 [Un contador](#un-contador)
 
@@ -78,14 +78,14 @@ Nota prácticas final: 2.0/2.0.
 
    3.5 [Números aleatorios](#números-aleatorios)
 
-   3.6 [Llamar una función con un simbolo](#como-llamar-una-función-con-un-simbolo)
+   3.6 [Llamar una función con un símbolo](#como-llamar-una-función-con-un-símbolo)
 
 
 # ¿Como instalar OCaml?
 
-1. **Abrimos una terminal en linux**
+1. **Abrimos una terminal en Linux**
     
-    en debian/ubuntu/mint:
+    en Debian/Ubuntu/Mint:
     ```bash
     sudo apt update 
     sudo apt upgrade
@@ -101,11 +101,11 @@ Nota prácticas final: 2.0/2.0.
     sudo dnf install ocaml opam rlwrap dune
     ```
 
-2. **El compilador interectivo**
+2. **El compilador interactivo**
 
     Para abrir el compilador interactivo de ocaml, basta con escribir `ocaml` en la terminal.
 
-    El compilador no tiene ayudas para poder editar texto, por instalamos junto a el `rlwrap`, que no va a dejar editar el comando escribo o recordar anteriores con las flechas del taclado.
+    El compilador no tiene ayudas para poder editar texto, por instalamos junto a el `rlwrap`, que no va a dejar editar el comando escribo o recordar anteriores con las flechas del teclado.
 
     Para abrir ocaml con rlwrap:
 
@@ -117,7 +117,7 @@ Nota prácticas final: 2.0/2.0.
 
 ## Configurar [Visual Studio Code](https://code.visualstudio.com/)
 
-Si queremos utilizar un IDE más cómodo que un bloq de notas. Además nos dice los tipos de las funciones antes de compilarlas.
+Si queremos utilizar un IDE más cómodo que un block de notas. Además nos dice los tipos de las funciones antes de compilarlas.
 
 Instalamos la extensión de [OCaml](https://marketplace.visualstudio.com/items?itemName=ocamllabs.ocaml-platform).
 
@@ -130,7 +130,7 @@ Configuramos opam para instalar las dependencias que necesita la extensión:
     ```
     Le damos que `yes` a todo.
 
-2. Instalamos las dependencias encesarias para la extensión:
+2. Instalamos las dependencias necesarias para la extensión:
 
     ```bash
     opam install ocaml-lsp-server ocamlformat
@@ -177,7 +177,7 @@ Nota: Para ejecutar cualquiera de los binarios generados tanto por `ocamlc` o `o
 
 OCaml proporciona un REPL (Read-Eval-Print Loop) o toplevel system, que permite la ejecución interactiva de comandos OCaml. El comando para iniciar el REPL, como vimos más arriba es `ocaml`.
 
-Aqui escribimos el código lo compila y inmediatamente lo ejecuta. Y Además nos va a dar información de lo que ocurrio.
+Aquí escribimos el código lo compila y inmediatamente lo ejecuta. Y Además nos va a dar información de lo que ocurrió.
 
 Es muy útil para aprender.
 
@@ -199,7 +199,7 @@ OCaml tiene un sistema de tipos estático y fuerte.
 
 El compilador para poder compilar tiene que ser capaz de averiguar que tipo de la expresión. Por ejemplo un float (1.45) o int (56).
 
-Esto pasa duracte la fase de compilación. Tipado estático.
+Esto pasa durante la fase de compilación. Tipado estático.
 
 En otros lenguajes puede ser dinámico (se decide durante la ejecución).
 
@@ -287,7 +287,7 @@ OCaml tiene signos diferentes la suma y el producto, según el tipo.
 
 ## Conversiones de tipo: 
 
-En OCalm `no hay conversiones automáticas de tipos`, a diferecnia de otros lenguajes como **C**. De ahí el tipado fuerte. Ejemplo:
+En OCalm `no hay conversiones automáticas de tipos`, a diferencia de otros lenguajes como **C**. De ahí el tipado fuerte. Ejemplo:
 
 ```ocaml
 # 4 + 16.3;;
@@ -295,7 +295,7 @@ Error: This expression has type float but an expression was expected of type
          int
 ```
 
-La unica de forma de poder sumar un int y un float es haciendo una `conversión de tipos`, por ejemplo con la función float_of_int:
+La única de forma de poder sumar un int y un float es haciendo una `conversión de tipos`, por ejemplo con la función float_of_int:
 
 ```ocaml
 float_of_int 4 +. 16.3;;
@@ -340,20 +340,20 @@ Como se le pasa un argumento a un operación en Ocaml:
 
 función argumento
 
-Nota: para pasar un árgumento negativo, por ejemplo de tipo int es necesario poner (-3).
+Nota: para pasar un argumento negativo, por ejemplo de tipo int es necesario poner (-3).
 
 ```ocaml
 #  2. *. asin 1.0;;
 - : float = 3.14159265358979312
 ```
 
-asin es un valor float -> float (e float a float) es decir una funcion que toma un valor float y devuelve otro valor float. Como vemos las funciones son siempre de un tipo a otro:
+asin es un valor float -> float (e float a float) es decir una función que toma un valor float y devuelve otro valor float. Como vemos las funciones son siempre de un tipo a otro:
 
 ```
 # asin;;
 - : float -> float = <fun>
 ```
-Es como vimos anteriormenter las funciones para [convertir los tipos de datos](#conversiones-de-tipo), char_of_int, que es del tipo *int to char*.
+Es como vimos anteriormente las funciones para [convertir los tipos de datos](#conversiones-de-tipo), char_of_int, que es del tipo *int to char*.
 
 ```ocaml
 # char_of_int;;
@@ -384,7 +384,7 @@ No hace falta escribir paréntesis.
 
 ### ¿Y que pasa con las funciones que "no devuelven nada"?
 
-Por ejempplo, print_endline.
+Por ejemplo, print_endline.
 
 ```ocaml
 # print_endline "Hola Mundo";; (* El Hola Mundo de OCaml *)
@@ -418,7 +418,7 @@ Ahora vamos a ver como definir nuestras propias funciones, por ejemplo la funci�
 - : bool -> bool = <fun>
 ```
 
-`FUNTION` es una palabra reservada en OCmal.
+`FUNCTION` es una palabra reservada en OCmal.
 
 `|` separa 2 reglas. 
 
@@ -426,7 +426,7 @@ izq -> der, a estás expresiones se les llama funciones `lamda`, también conoci
 
 La programación **funcional** se basa en el [lambda-cálculo](https://es.wikipedia.org/wiki/C%C3%A1lculo_lambda), un formalismo matemático introducido por Alonzo Church en la década de 1930. El lambda-cálculo proporciona un marco teórico para definir y trabajar con funciones y sus aplicaciones. Es el fundamento teórico de muchos lenguajes de programación funcionales como Haskell, `OCaml`, Lisp, y otros.
 
-A diferencia de la imperactiva que se basa en la [máquina de Turing](https://es.wikipedia.org/wiki/M%C3%A1quina_de_Turing).
+A diferencia de la imperativa que se basa en la [máquina de Turing](https://es.wikipedia.org/wiki/M%C3%A1quina_de_Turing).
 
 ### ¿Cómo la aplicamos?
 
@@ -487,7 +487,7 @@ Si ahora llamamos a pi, en el compilador interactivo:
 - : float = 3.14159265358979312
 ```
 
-ESTO `NO ES UNA VARIABLE` , no existe en concento de variable para referirse a los nombre de *cosas* en `Programación Funcional`. 
+ESTO `NO ES UNA VARIABLE` , no existe en concepto de variable para referirse a los nombre de *cosas* en `Programación Funcional`. 
 
 De hecho si volvemos a definir pi:
 ```ocaml
@@ -559,14 +559,14 @@ A diferencia de la evaluación perezosa utilizada en algunos lenguajes funcional
 
 La evaluación eager de OCaml facilita el control sobre el flujo de ejecución y permite optimizaciones más predecibles en términos de rendimiento y uso de memoria.
 
-Nota:  Ocaml libera memoria automaticamente, a diferecnia de C.
+Nota:  Ocaml libera memoria automáticamente, a diferencia de C.
 
-## Librerias en OCaml
+## Librerías en OCaml
 
 ```ocaml
 Char.code;; 
 ```
-¿Qué pasa? ¿No deberia empezar por minúscula?
+¿Qué pasa? ¿No debería empezar por minúscula?
 
 El nombre ahí es code, y el Char es un módulo, dentro de ese módulo hay un definición para el nombre code.
 
@@ -579,12 +579,12 @@ El nombre ahí es code, y el Char es un módulo, dentro de ese módulo hay un de
 	           --- List
                --- Etc.
 
-No siempre es necesario especificar el módulo, por que las que estan en Stdlib el compilador las detecta automaticamente.
+No siempre es necesario especificar el módulo, por que las que están en Stdlib el compilador las detecta automáticamente.
 
 Para el resto Modulo.Nombre.
 
 Como se carga un módulo nuestro:
-```ocmal
+```ocaml
 #load "modulo.cmo";;
 ```
 Si no queremos poner Modulo.nombre puedo hacer:
@@ -666,7 +666,7 @@ Otro ejemplo, la [exponenciación](#suma--resta---producto---división--y-expone
 
 3. Operador `not`:
 
-    Es la necación lógica.
+    Es la negación lógica.
 
     ```ocaml
     # ( not );;
@@ -710,7 +710,7 @@ Otro ejemplo, la [exponenciación](#suma--resta---producto---división--y-expone
     - : bool = false
     ```
 
-    Debería dar error al dividir entre 0, por que en Ocaml en las funciones primero de evalua el argumneto, por ser ocaml un lenguaje [`eager`](#evaluación-en-ocaml).
+    Debería dar error al dividir entre 0, por que en Ocaml en las funciones primero se evalúa el argumento, por ser ocaml un lenguaje [`eager`](#evaluación-en-ocaml).
 
     Sin embargo con otro operador:
 
@@ -720,7 +720,7 @@ Otro ejemplo, la [exponenciación](#suma--resta---producto---división--y-expone
     ```
     ### ¿Que pasa con `&&`?
     
-    b1 && b2, se evalua b1 y si es true se evalua b2, pero si b1 es false ya no se evalua b2.
+    b1 && b2, se evalúa b1 y si es true se evalua b2, pero si b1 es false ya no se evalua b2.
 
     Es una manera de hacer una conjunción con atajo.
 
@@ -739,10 +739,10 @@ Otro ejemplo, la [exponenciación](#suma--resta---producto---división--y-expone
 Estamos acostumbrado al if-then-else de otros lenguajes, pero es lo mismo que usar directamente los operadores lógicos, de hecho en ocasiones es más natural && y ||.
 
 ```ocaml
-if condicion then
-  expresion_si_cierto
+if condición then
+  expresión_si_cierto
 else
-  expresion_si_falso
+  expresión_si_falso
 ```
 
 ## Tuplas de datos o pares
@@ -764,7 +764,7 @@ El producto cartesiano en Ocaml está definido por defecto.
 
 ¿Qué es int * int? Un par. El producto cartesiano.
 
-### Se puede definir funcionnes que reciban una tupla o par de valores:
+### Se puede definir funciones que reciban una tupla o par de valores:
 
 ```ocaml
 # let f (x,y) = 2 * x + y;; (* Abreviado *)
@@ -809,7 +809,7 @@ En OCaml se pueden definir super fácil estás funciones.
 # let fst (x,y) = x;;
 val fst : 'a * 'b -> 'a = <fun>
 ```
-O como la y no se usa, se puede usar el simblo `_`.
+O como la y no se usa, se puede usar el símbolo `_`.
 
 ```ocaml
 # let fst (x,_) = x;;
@@ -841,7 +841,7 @@ Recordemos que los tipos de datos en OCaml son `INFINITOS`, por lo tanto:
 - : int * string * bool * char * float = (1, "hola", true, 'C', 4.5)
 ```
 
-Obsiamente no puedo hacer fst a un trio:
+Obviamente no puedo hacer fst a un trio:
 ```ocaml
 # fst (2,3,4);;
 Error: This expression has type 'a * 'b * 'c
@@ -869,7 +869,7 @@ val sp : int -> int -> int * int = <fun>
 
 Otro ejemplo:
 
-La función per_area calcula el perímetro y la área de un círculo, devolviendolos en un par. 
+La función per_area calcula el perímetro y la área de un círculo, devolviéndolos en un par. 
 ```ocaml
 # let per_area r =  (*r es el Radio de un círculo *)
   let pi = 2. *. asin 1. in
@@ -881,7 +881,7 @@ val per_area : float -> float * float = <fun>
 - : float * float = (25.1327412287183449, 50.2654824574366899)
 ```
 
-Una pequeña optimización es definir pi con anterioridad, para que no se evalue 2 veces:
+Una pequeña optimización es definir pi con anterioridad, para que no se evalué 2 veces:
 
 ```ocaml
 # let per_area =
@@ -925,7 +925,7 @@ fib n =                                // n >= 0
   ;;
 val quo : int -> int -> int = <fun>
 ```
-Aqui va creciendo, es se llama recursividad no terminal, no tail recursion.
+Aquí va creciendo, es se llama recursividad no terminal, no tail recursion.
 
 #### ¿Por qué crece?
 
@@ -945,7 +945,7 @@ Cuando hacemos la llamada recursiva, ```quo (x - y) y```, nos queda `pendiente` 
   ;;
 val rem : int -> int -> int = <fun>
 ```
-Aqui no crece, esto se llama reculsividad final o terminal, tail recursion.
+Aquí no crece, esto se llama recursividad final o terminal, tail recursion.
 
 #### ¿Por qué NO crece?
 
@@ -957,11 +957,11 @@ else rem (x - y) y
 La llamada recursiva es la última operación, non vamos dejar operaciones en la pila.
 
 
-Esta última recursividad es mucho más eficiente. No existe espacio infinito para guardar la reculsividad, normalmente el espacio lo gestiona el sistema operativo o la máquina virtual de Ocaml, se llama pila de reculsividad, si se llena da ERROR de stack overflow.
+Esta última recursividad es mucho más eficiente. No existe espacio infinito para guardar la recursividad, normalmente el espacio lo gestiona el sistema operativo o la máquina virtual de Ocaml, se llama pila de recursividad, si se llena da ERROR de stack overflow.
 
-Una expresión reculsiva terminal nunca va a agotar la pila de reculsividad.
+Una expresión recursiva terminal nunca va a agotar la pila de recursividad.
 
-Debería ser muy fácil determinal si es terminal o no, si lo estamos entendiendo.
+Debería ser muy fácil determinar si es terminal o no, si lo estamos entendiendo.
 
 ### Complejidad computacional
 
@@ -973,16 +973,16 @@ Ahora vamos a juntar los 2 ejemplos anteriores:
   ;;
 val div : int -> int -> int * int = <fun> 
 ```
-Nota: Devuelve un [par](#tuplas-de-datos-o-pares).
+Nota: Devuelve un [par](#tupla-de-datos-o-pares).
 
 Si analizamos esto, hacemos "2 veces el reparto", lo cual desde el punto de vista computacional no tiene sentido.
 
-Vamo a redefinir la función:
+Vamos a redefinir la función:
 
 ```ocaml
 # (* División con cociente y resto *) 
   let rec div1 x y =
-    if x < y  then (0,x) (* Paso no reculsivo *)
+    if x < y  then (0,x) (* Paso no recursivo *)
     else 1 + fst (div (x-y) y), snd (div (x-y) y)
   ;;
 val div : int -> int -> int * int = <fun>
@@ -990,7 +990,7 @@ val div : int -> int -> int * int = <fun>
 
 #### ¿Está mejor?
 
-Pareque si que, pero no hemos reduccido el número de pasos al contrario 2^n pasos. Tarda muchísimo.
+Parece que sí, pero no hemos reducido el número de pasos al contrario 2^n pasos. Tarda muchísimo.
 
 El error es calcular lo mismo 2 veces, lo cual de vuelta desde el punto de vista computacional no tiene sentido.
 
@@ -1006,7 +1006,7 @@ Ahora:
 val div : int -> int -> int * int = <fun>
 ```
 
-Y sin usar fst y snd, como se comentaba con [anterioridad](#en-el-caso-de-snd), no son muy usandas, dado que es más elegante y incluso visual hacerlo con el patrón.
+Y sin usar fst y snd, como se comentaba con [anterioridad](#en-el-caso-de-snd), no son muy usadas, dado que es más elegante y incluso visual hacerlo con el patrón.
 
 #### Comparación de [tiempos](#medir-tiempos-de-ejecución):
 
@@ -1017,7 +1017,7 @@ Y sin usar fst y snd, como se comentaba con [anterioridad](#en-el-caso-de-snd), 
 - : float = 0.0040679999999895244
 ```
 
-Podemos ver una mejora considarable de los tiempos de ejecución.
+Podemos ver una mejora considerable de los tiempos de ejecución.
 
 ### Fibonacci, análisis:
 
@@ -1084,19 +1084,19 @@ Ahora los tiempos:
 
 En la otra versión fib 80 lo acabaríamos abortando del tiempo que llevaba.
 
-#### ¿Es recursiba terminal fib2?
+#### ¿Es recursiva terminal fib2?
 
 No, dado que la última operación que hace no es la llamada recursiva, lo cual en este caso no importa, dado que con fib de 90 nos pasamos de [max_int](#límites-de-precisión-ocaml).
 
 ### Hacer una función recursiva terminal
 
-Cuando una recursivida no es termnial, puede dar el error de `stack overflow`. Esto el debido a que cada llamada de la función deja en la pila las operaciones pendientes.
+Cuando una recursividad no es terminal, puede dar el error de `stack overflow`. Esto el debido a que cada llamada de la función deja en la pila las operaciones pendientes.
 
-Pero si la recursivad es terminal (tail reculsion) nunca va a dar `stack overflow`.
+Pero si la recursividad es terminal (tail reclusion) nunca va a dar `stack overflow`.
 
-Hacer una funciín recursiva termnial es como si lo hiciera con un bucle, los buckes se traducen en funciones reculsivas terminales.
+Hacer una función recursiva terminal es como si lo hiciera con un bucle, los bucles se traducen en funciones recursivas terminales.
 
-Vamos a hacer fib recursivo termnial:
+Vamos a hacer fib recursivo terminal:
 
 ```ocaml
 # (* Sucesión de Fibonacci, tail recursion *)
@@ -1113,7 +1113,7 @@ Ahora la última operación es la llamada recursiva  `else aux (i + 1, f + a, f)
 
 ## Listas
 
-Para cada valor de tipo `t`, tenemos tambien `t list`.
+Para cada valor de tipo `t`, tenemos también `t list`.
 
 ¿Qué es un t list? Es una secuencias o listas finitas de valores de tipo t.
 
@@ -1136,7 +1136,7 @@ Para cada valor de tipo `t`, tenemos tambien `t list`.
 - : 'a list = []
 ```
 
-Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funciones que manejen listas. Además las listas tienen `naturaleza recursiva`, es decir, una lista o es lista vacia o tiene una cabeza y una cola.
+Nota: La lista vacía `[]`, es super importante para hacer `casos base` en funciones que manejen listas. Además las listas tienen `naturaleza recursiva`, es decir, una lista o es lista vacía o tiene una cabeza y una cola.
 
 ### Funciones para manejar listas
 
@@ -1184,9 +1184,9 @@ Es equivalente a usar la función `List.append`:
 - : (int * int) list = [(1, 2); (1, 3)]
 ```
 
-### Contrucción de funciones para manejar listas
+### Construcción de funciones para manejar listas
 
-Definir length, nos devuelve en número de elemenos de una lista, su longitud, será del tipo 'a list -> int.
+Definir length, nos devuelve el número de elementos de una lista, su longitud, será del tipo 'a list -> int.
 
 ```ocaml
 # let rec length l = 
@@ -1206,7 +1206,7 @@ Last, nos devuelve el último elemento de una lista, del tipo 'a list -> 'a.
 val last : 'a list -> 'a = <fun>
 ```
 
-#### La función lenght, en lugar de usar `if-then-else`, se puede construir con [Pattern Matching](#el-pattern-matching):
+#### La función length, en lugar de usar `if-then-else`, se puede construir con [Pattern Matching](#el-pattern-matching):
 
 ```ocaml
 # let rec length l = 
@@ -1250,7 +1250,7 @@ Como vemos el append, que está así definido en el módulo List de OCaml, no es
 val rev_append : 'a list -> 'a list -> 'a list = <fun>
 ```
 
-COmo vemos es una función reculsiva terminal, es más natural el rev_append que el append por como está construidas las listas en Ocaml.
+Como vemos es una función recursiva terminal, es más natural el rev_append que el append por como está construidas las listas en Ocaml.
 
 Podemos definir List.rev a partir del rev_append, dado que es un caso particular.
 
@@ -1272,7 +1272,7 @@ val append' : 'a list -> 'a list -> 'a list = <fun>
 
 A partir de la versión 5 de Ocaml la append es terminal, en las anterior no lo era por lo lentas que eran las máquinas en su momento.
 
-La no terminalidad de append tiene una particularidad, lo que deja pendiente es el contructor, son terminales salvo por el contructor es constructor no es una "operación" como tal, si al compilador se lo pides puede compilar función así como terminal. Que es lo que han hecho en la versión 5 de ocaml.
+La no terminalidad de append tiene una particularidad, lo que deja pendiente es el constructor, son terminales salvo por el constructor es constructor no es una "operación" como tal, si al compilador se lo pides puede compilar función así como terminal. Que es lo que han hecho en la versión 5 de ocaml.
 
 ## Los errores de ejecución
 
@@ -1288,7 +1288,7 @@ Exception: Division_by_zero.
 Exception: Failure "hd".
 ```
 
-No puede devolver la cabeza de una lista vacia.
+No puede devolver la cabeza de una lista vacía.
 
 ```ocaml
 # List.tl [];;
@@ -1353,7 +1353,7 @@ Here is an example of a case that is not matched:
 val hd : 'a list -> 'a = <fun>
 ```
 
-Nos da una abvertencia de match, dado que me he dajado la lista vacía.
+Nos da una advertencia de match, dado que me he dejado la lista vacía.
 
 ```ocaml
 # hd [];;
@@ -1376,7 +1376,7 @@ Es una función de un error a cualquier cosa, que quiere decir, que nunca devuel
 Exception: Division_by_zero.
 ```
 
-No devuleve nada si no que imprime el error y termina la ejecución.
+No devuelve nada si no que imprime el error y termina la ejecución.
 
 Ahora que sabemos todo esto, vamos a hacerlo bien:
 
@@ -1394,7 +1394,7 @@ Exception: Failure "hd"
 
 Al igual que para cada tipo 'a hay un 'a list, también para cada tipo de datos 'a existe 'a option.
 
-Son muy útiles para manegar errores y no detener la ejecución del código.
+Son muy útiles para manejar errores y no detener la ejecución del código.
 
 Tienen 2 constructores Nome y Some.
 
@@ -1405,11 +1405,11 @@ Tienen 2 constructores Nome y Some.
 - : int option = Some 5
 ```
 
-Nota: Los contructores en Ocaml `SIEMPRE` empiezan por mayúscula, como vimos en los [errores](#los-errores-de-ejecución). El contuctor de los tipos exn `Failure` y ahora `Some` y `None`.
+Nota: Los constructores en Ocaml `SIEMPRE` empiezan por mayúscula, como vimos en los [errores](#los-errores-de-ejecución). El constructor de los tipos exn `Failure` y ahora `Some` y `None`.
 
 Un ejemplo:
 
-`List.find` da error si no encuntra y `List.fin_opt` da None al fallar y un int option al estar bien.
+`List.find` da error si no encentra y `List.fin_opt` da None al fallar y un int option al estar bien.
 
 Vamos a definir un par de valores para trabajar
 ```ocaml
@@ -1421,7 +1421,7 @@ val l1 : int list = [1; 3; 3; 5]
 val l2 : int list = [1; 2; 3; 5]
 ```
 
-Bien, ahora vamos a definar un función que imprima si es par:
+Bien, ahora vamos a definir una función que imprima si es par:
 
 Sin usar int option
 
@@ -1435,7 +1435,7 @@ Exception: Not_found.
 2
 - : unit = ()
 ```
-Como vemos cuando no encuntra un par, dun error de ejecución, lo cual nos pararía el programa. Pero si usamos `List.fin_opt` no va a petar, en algún caso nos puede interesar. Vamos usar `List.fin_opt`  y [pattern maching](#el-pattern-matching):
+Como vemos cuando no encuentra un par, dun error de ejecución, lo cual nos pararía el programa. Pero si usamos `List.fin_opt` no va a petar, en algún caso nos puede interesar. Vamos usar `List.fin_opt`  y [pattern maching](#el-pattern-matching):
 
 ```ocaml
 # let print_first_even l =
@@ -1502,7 +1502,7 @@ try <e> with
   | ...
 ```
 
-Si `<e>` no da fallo no pasa nada, si lo da, hace patern maching con lo que tiene a continuación. Y el error de interceptaria en lugar de detenerse el código.
+Si `<e>` no da fallo no pasa nada, si lo da, hace pattern matching con lo que tiene a continuación. Y el error se interceptaría en lugar de detenerse el código.
 
 ## Definir tipos de datos
 
@@ -1514,7 +1514,7 @@ Por ejemplo:
 type numero = I of int | F of float;;
 ```
  
-Hemos definido 2 contructores, I que nos convierte un int en un número y F que nos convierte un float en un número.
+Hemos definido 2 constructores, I que nos convierte un int en un número y F que nos convierte un float en un número.
 
 ```ocaml
 # I 4;;
@@ -1525,9 +1525,9 @@ Hemos definido 2 contructores, I que nos convierte un int en un número y F que 
 - : numero list = [I 3; F 2.3; I 5]
 ```
 
-Con el tipo de dato `numero` y patern maching, podríamos hacer una funciones que diferenciaran los enteros: 
+Con el tipo de dato `numero` y pattern matching, podríamos hacer una funciones que diferenciaran los enteros: 
 
-```ocmal
+```ocaml
 # let is_int = function  (* Es un entero? *)
       I _ -> true | _ -> false
   ;;
@@ -1544,7 +1544,7 @@ val first_int : numero list -> int = <fun>
 
 `Otro int`:
 
-```ocmal
+```ocaml
 # type otroint = Otro of int;;
 type otroint = Otro of int
 # Otro 1;;
@@ -1573,7 +1573,7 @@ type dobleint = R of int | L of int
 - : dobleint = L 10
 # L 10 = R 10;;
 - : bool = false
-(* No son iguales dado que no están construidos con el mismo contructor *)
+(* No son iguales dado que no están construidos con el mismo constructor *)
 ```
 
 Si no existieran los int option, podría implementarlos:
@@ -1581,7 +1581,7 @@ Si no existieran los int option, podría implementarlos:
 ```ocaml
 # type intplus = Int of int | Na;;
 type intplus = Int of int | Na
-(* Int es un constructor varaible y Na constante *)
+(* Int es un constructor variable y Na constante *)
 # Na;;
 - : intplus = Na
 # Int 4;;
@@ -1590,7 +1590,7 @@ type intplus = Int of int | Na
 - : intplus = Int 10
 ```
 
-Uso esta definición en el [anexo](#como-llamar-una-función-con-un-simbolo), como usar `<e1> / <e2>` en lugar de `func <e1> <e2>`.
+Uso esta definición en el [anexo](#como-llamar-una-función-con-un-símbolo), como usar `<e1> / <e2>` en lugar de `func <e1> <e2>`.
 
 Podría definir los booleanos:
 
@@ -1602,7 +1602,7 @@ type boolean = True | False
     | False -> True
   ;;
 val no : boolean -> boolean = <fun>
-(* Podriamos definirlo como en C *)
+(* Podríamos definirlo como en C *)
 # let (!) = function
       True -> False
     | False -> True;;
@@ -1630,7 +1630,7 @@ val es_negro : palo -> boolean = <fun>
 Ejemplo de definición recursiva:
 
 ```ocaml
-# type nat = One | Succ of nat;;  (* Es una definición reculsiva *)
+# type nat = One | Succ of nat;;  (* Es una definición recursiva *)
 type nat = One | Succ of nat
 # One;;
 - : nat = One
@@ -1679,7 +1679,7 @@ Ejemplo de definición polimórfica:
 # type 'a option = None | Some of 'a;; (* Tipo polimórfico *)
 type 'a option = None | Some of 'a
 ```
-option no es un tipo, es un contructor de tipos.
+option no es un tipo, es un constructor de tipos.
 
 Así están definidos en OCaml los 'a option.
 
@@ -1729,9 +1729,9 @@ let rec altura = function
 
 El la `práctica 9`, hay más ejemplos de árboles binarios.
 
-## La parte imperactiva de OCaml
+## La parte imperativa de OCaml
 
-Hasta el momento solo usamos la parte funcional de OCaml, pero como es un lenguaje multiparadigma, tambien tiene el paradigma imperactivo, como C.
+Hasta el momento solo usamos la parte funcional de OCaml, pero como es un lenguaje multiparadigma, también tiene el paradigma imperativo, como C.
 
 El operador `;` en OCaml se usa para ejecutar una expresión y luego ejecutar otra, ignorando el resultado de la primera. Esto es útil cuando tienes varias expresiones que deben ejecutarse en secuencia y solo te importa el resultado de la última.
 
@@ -1784,7 +1784,7 @@ Los switch, se pueden hacer con el `match <e>` que vimos anteriormente.
 ```ocaml
 while <b> do <e> done (* <b> bool *)
 ```
-Cuando es false daria un `unit` y si no evalua `<e>`.
+Cuando es false dará un `unit` y si no evalua `<e>`.
 
 #### Bucle for:
 
@@ -1852,13 +1852,13 @@ Como vemos los bucles son más parecidos a una función recursiva terminal.
 val v : int array = [|1; 10; 100|]
 ```
 
-Diferecias con las listas:
+Diferencias con las listas:
 
-- Rendimiento, en a' array puedes acceder al elemento de cualquiera posición con coste constante, adiferencia de las listas.
+- Rendimiento, en a' array puedes acceder al elemento de cualquiera posición con coste constante, a diferencia de las listas.
 
 - Los array está numerados, de 0 a (n-1).
 
-- Tambien tenemos el módulo Array.
+- También tenemos el módulo Array.
 
 ```ocaml
 # Array.length;;
@@ -1892,7 +1892,7 @@ Cambiar un valor del array:
 
 Devuelve unit, pero no nos importa lo que devuelva, lo importante es que cambia v.
 
-Set tambien se puede abreviar:
+Set también se puede abreviar:
 
 ```ocaml
 # v.(2) <- v.(1) + 2 * v.(2);; (* Set abreviado <- *)
@@ -1922,11 +1922,11 @@ Al igual que List.init y List.make.
 type person = { name : string; age : int; }
 ```
 
-person es un reguistro de datos, un struct en C.
+person es un registro de datos, un struct en C.
 
 Tiene 2 componentes un string y un int por lo tanto es un registro de 2 campos.
 
-Se puede hacer patern maching en los registros:
+Se puede hacer pattern matching en los registros:
 
 ```ocaml
 let order p =
@@ -2017,9 +2017,9 @@ let next, reset =
   (function () -> n := 0);;         (* reset *)
 ```
 
-Ahora, una manera de hacer implementar esto comodamente es usar un módulo con el contador.
+Ahora, una manera de hacer implementar esto cómodamente es usar un módulo con el contador.
 
-Todo este tiempo con ocamlc algo.ml -i algo.mli estabamos compilando módulos.
+Todo este tiempo con ocamlc algo.ml -i algo.mli estábamos compilando módulos.
 
 Para cargarlos en el compilador interactivo `#load "counter.cmo";;`, entre comillas la ruta.
 
@@ -2152,7 +2152,7 @@ Como acabamos de ver en el apartado anterior, tanto los registros, como los mód
 
 Por este motivo los objeto no son muy utilizados en OCaml.
 
-Vamos a definoir un contador con objetos:
+Vamos a definir un contador con objetos:
 
 ```ocaml
 # let counter2 = object
@@ -2165,7 +2165,7 @@ val counter : < next : int; reset : unit > = <obj>
 
 Vemos que tiene 2 métodos, next y reset.
 
-Estos métodos se invocan con nombre_del_objeto#metodo.
+Estos métodos se invocan con nombre_del_objeto#método.
 
 ```ocaml
 # counter#next;;
@@ -2246,7 +2246,7 @@ Como con los modulos y los registros puedo crear una función que me devuelva un
 # let new_counter () = object
     val mutable n = 0
     method next = n <- n + 1 ; n  (* Suma 1 *)
-    method reset = n <- 0         (* Resetea el contador a 0 *)
+    method reset = n <- 0         (* Reinicia el contador a 0 *)
   end;;
 val new_counter : unit -> < next : int; reset : unit > = <fun>
 # let c1 = new_counter ();;
@@ -2266,11 +2266,11 @@ Los objetos c1, c2, c3 son del mismo tipo, de hecho podemos ponerlos en una list
 
 ### ¿Qué nos falta aquí? Las clases
 
-Normalmente en los lenjuages orientados a onjetos tenemos que definiar la clase antes que los objetos.
+Normalmente en los lenguajes orientados a objetos tenemos que definir la clase antes que los objetos.
 
-Aquí puedo tener el objetos sin clase, pero tambien existen las clases, aunque como vemos podría vivir sin ellas.
+Aquí puedo tener el objetos sin clase, pero también existen las clases, aunque como vemos podría vivir sin ellas.
 
-Las clases proporcionan la caracteristica de la herencia, con la función `new_counter` no tengo.
+Las clases proporcionan la característica de la herencia, con la función `new_counter` no tengo.
 
 Arriba tenia objetos inmediatos. ¿Cómo creo una clase?
 
@@ -2288,7 +2288,7 @@ class new_counter :
 val cc : new_counter = <obj>
 ```
 
-Cuando defino clases lo que estoy haciendo es definir un `alias`, para un tipo de objeto, ahora new_counter es el nombre de los objetos que tienen el metodo reset de tipo unit y next de tipo int:
+Cuando defino clases lo que estoy haciendo es definir un `alias`, para un tipo de objeto, ahora new_counter es el nombre de los objetos que tienen el método reset de tipo unit y next de tipo int:
 
 ```ocaml
 # [c1;c2;c3;cc];;
@@ -2301,7 +2301,7 @@ Vamos a hablar de la herencia:
 # class counter = object
     val mutable n = 0
     method next = n <- n + 1 ; n    (* Suma 1 *)
-    method reset = n <- 0           (* Resetea el contador a 0 *)
+    method reset = n <- 0           (* Reinicia el contador a 0 *)
   end;;
 class counter :
   object val mutable n : int method next : int method reset : unit end
@@ -2335,14 +2335,14 @@ Error: This expression has type counter
        but an expression was expected of type counter_with_set
        The first object type has no method set
 ```
-Ahora vamos a retringir `c`, de la clase `counter_with_set` a `counter`.
+Ahora vamos a restringir `c`, de la clase `counter_with_set` a `counter`.
 
 ```ocaml
 # [(c :> counter) ;cc];;
 - : counter list = [<obj>; <obj>]
 ```
 
-Aunque en la lista se use como un `counter`, yo ouedo acceder al set y modificarlo.
+Aunque en la lista se use como un `counter`, yo puedo acceder al set y modificarlo.
 
 Al heredar se puede editar una clase, por ejemplo:
 
@@ -2352,11 +2352,11 @@ class counter_with_init ini = object (self)
   method reset = (* n <- ini *)
     self#set ini    (* Pasa el valor de ini *)
   initializer (* n <- ini *) 
-    self#reset (* Se ejecuta al crear una instacia *)
+    self#reset (* Se ejecuta al crear una instancia *)
 end;;
 ```
 
-Un metodo permite una espacio de reculsibidad abierta:
+Un método permite una espacio de recursividad abierta:
 
 ```ocaml
 class counter_with_init'n'fin ini fin = object (self)
@@ -2400,7 +2400,7 @@ El valor máximo y mínimo que pueden representar un int y un float, se puede co
 
 La funcion `Sys.time`, devuelve lo que el sistema operativo dice que lleva consumido este proceso de CPU en segundos.
 
-Nota: `Sys.time no es funcional`, no es una función es una pseudofunción, es imperactivo.
+Nota: `Sys.time no es funcional`, no es una función es una pseudofunción, es imperativa.
 
 ```ocaml
 # Sys.time;;
@@ -2409,7 +2409,7 @@ Sys.time ();;
 - : float = 81.111392
 ```
 
-Sabiendo esto, para meder tiempos de ejecución:
+Sabiendo esto, para medir tiempos de ejecución:
 
 1. Llamas a `Sys.time`.
 
@@ -2482,7 +2482,7 @@ El patrón `[]`, representa la `lista vacía`, el `[x]` es la lista con `un solo
 
 ## TIPS 
 
-En ocaml se puede poner _ entre números para marcal el . y leer más facil, ej: 1_000_000 un millon.
+En ocaml se puede poner _ entre números para marcar el . y leer más fácil, ej: 1_000_000 un millón.
 
 ```ocaml
 # 1_000_000;;
@@ -2499,7 +2499,7 @@ El módulo `Ramdom`. Algunas funciones:
 
 3. Random.bool (): Genera un valor booleano aleatorio (true o false).
 
-```ocmal
+```ocaml
 # Random.int;;
 - : int -> int = <fun>
 # Random.int;;
@@ -2554,7 +2554,7 @@ val list : int list =
    334197; 90671; 328186; 94162; 237959; 383377; 31681; 101271; 83189; ...]
 ```
 
-## Como llamar una función con un simbolo
+## Como llamar una función con un símbolo
 
 Vamos a definir la división entera si que al dividir por 0 de error.
 
